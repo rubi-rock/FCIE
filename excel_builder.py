@@ -29,9 +29,11 @@ class ExcelGenerator(object):
             worksheet.write(cell, header, self.__formats['header'])
             col += 1
 
-    def __write_cell(self, worksheet, row, col, value):
+    def __write_cell(self, worksheet, row, col, value, format = None):
+        if format is None:
+            format = self.__formats['cell']
         cell = xl_rowcol_to_cell(row, col)
-        worksheet.write(cell, value, self.__formats['cell'])
+        worksheet.write(cell, value, format)
 
     def __init_formats(self):
         self.__formats['section'] = self.__workbook.add_format(
@@ -39,6 +41,7 @@ class ExcelGenerator(object):
         self.__formats['header'] = self.__workbook.add_format(
             {'border': 6, 'bold': False, 'font_name': 'Times New Roman'})
         self.__formats['cell'] = self.__workbook.add_format({'valign': 'top', 'text_wrap': True, 'border': 1})
+        self.__formats['cell_percent'] = self.__workbook.add_format({'valign': 'top', 'num_format': '0.0%', 'text_wrap': True, 'border': 1})
 
     def __create_worksheet(self, name):
         worksheet = self.__workbook.add_worksheet(name)
@@ -98,6 +101,22 @@ class ExcelGenerator(object):
         worksheet.tab_color = "96FF33"
         self.__write_section(worksheet, 0, 0, EXCEL_HEADERS[ExcelBlock.institution][ExcelBlockDef.section])
         self.__write_headers(worksheet, 1, 0, EXCEL_HEADERS[ExcelBlock.institution][ExcelBlockDef.headers])
+        worksheet.set_column('A:H', 15)
+        worksheet.set_column('I:I', 25)
+        # Etablissement
+        mds = self.__csv.values[ExcelBlock.institution]
+        row = 2
+        for md in mds:
+            self.__write_cell(worksheet, row, 0, int(md[0]) if md[0] != '' else None)  # Numero de pratique
+            self.__write_cell(worksheet, row, 1, int(md[1]) if md[1] != '' else None)  # Numero de groupe
+            self.__write_cell(worksheet, row, 2, int(md[2]) if md[2] != '' else None)  # Numero d'etblissement
+            self.__write_cell(worksheet, row, 3, md[3])  # Nom d'etablissement
+            self.__write_cell(worksheet, row, 4, float(md[4].strip('%'))/100 if md[4] != '' else None, self.__formats['cell_percent'])  # Pourcentage
+            self.__write_cell(worksheet, row, 5, OUI_NON[md[5]])  # RMX (oui/non)
+            self.__write_cell(worksheet, row, 6, OUI_NON[md[6]])  # Secteur Cabinet (oui/non)
+            self.__write_cell(worksheet, row, 7, None)  # Secteur CLSC
+            self.__write_cell(worksheet, row, 8, None)  # Secteur Centre Hospitalier
+            row += 1
 
     def __generate_user_access(self):
         worksheet = self.__create_worksheet("Accès utilisateurs")
