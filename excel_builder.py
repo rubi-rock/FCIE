@@ -51,6 +51,7 @@ class ExcelGenerator(object):
 
     def __generate_config_base(self):
         worksheet = self.__create_worksheet("Config de base")
+        worksheet.tab_color = "FF3300"
         self.__write_section(worksheet, 0, 0, EXCEL_HEADERS[ExcelBlock.customer][ExcelBlockDef.section])
         self.__write_headers(worksheet, 1, 0, EXCEL_HEADERS[ExcelBlock.customer][ExcelBlockDef.headers])
         self.__write_section(worksheet, 4, 0, EXCEL_HEADERS[ExcelBlock.user][ExcelBlockDef.section])
@@ -94,10 +95,12 @@ class ExcelGenerator(object):
 
     def __generate_institution(self):
         worksheet = self.__create_worksheet("Établissement")
+        worksheet.tab_color = "96FF33"
         self.__write_section(worksheet, 0, 0, EXCEL_HEADERS[ExcelBlock.institution][ExcelBlockDef.section])
         self.__write_headers(worksheet, 1, 0, EXCEL_HEADERS[ExcelBlock.institution][ExcelBlockDef.headers])
 
     def __generate_user_access(self):
         worksheet = self.__create_worksheet("Accès utilisateurs")
+        worksheet.tab_color = "1072BA"
         self.__write_section(worksheet, 0, 0, EXCEL_HEADERS[ExcelBlock.user_access][ExcelBlockDef.section])
         self.__write_headers(worksheet, 1, 0, EXCEL_HEADERS[ExcelBlock.user_access][ExcelBlockDef.headers])
