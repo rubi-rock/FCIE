@@ -1,0 +1,38 @@
+{{orientation: portrait, paper: 1, tab_color: #33cc33}}
+{align: center, bold: True}ACCORD DE DPA DU PAYEUR
+{align: center, bold: True}Programme de débits préautorisés d’entreprise*
+{align: center, bold: True}Autorisation de débits directs d’un compte du payeur, en faveur du bénéficiaire
+
+{bold: True}Instructions :
+1. Veuillez remplir toutes les sections et signer à la section 1
+2. Retournez le formulaire rempli, accompagné d’un chèque portant la mention «NUL», à :
+Purkinje inc. 614 rue St-Jacques, bureau 200, Montréal, Québec, H3C 1E2
+3. N’hésitez pas à vous adresser au bénéficiaire si vous avez des questions.
+
+{bold: True}1- RENSEIGNEMENTS SUR LE CLIENT
+
+Nom du client :|TEXTBOX:200
+Adresse :|TEXTBOX:200
+N° de téléphone :|TEXTBOX:200
+Signature du payeur :|TEXTBOX:200
+
+Date :|TEXTBOX
+
+
+{bold: True}2- ÉTABLISSEMENT FINANCIER ET RENSEIGNEMENTS BANCAIRES DU CLIENT
+
+(Veuillez taper ou inscrire lisiblement en caractères d’imprimerie)
+Numéro de succursale (5 caractères)|TEXTBOX:300
+N°d’établissement (3 caractères)|TEXTBOX:300
+Numéro de compte|TEXTBOX:300
+Dénomination de l’établissement financier|TEXTBOX:300
+Succursale|TEXTBOX:300
+Adresse de la succursale|TEXTBOX:300
+Ville (province) Code postale|TEXTBOX:300
+
+
+{bold: True}3- RENSEIGNEMENTS SUR LES PAIEMENTS (veuillez taper ou inscrire lisiblement en caractère
+d’imprimerie)
+
+Montant :	$68.00
+Fréquence : Mensuelle	Mensuelle

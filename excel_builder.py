@@ -1,15 +1,21 @@
 import re
 import xlsxwriter
 from xlsxwriter.utility import xl_rowcol_to_cell
-import pyexcel
-import pyexcel_xlsx
 
 from csv_parser import CSVParser
 from constants import EXCEL_HEADERS, ExcelBlockDef, ExcelBlock, OUI_NON, OS_LIST, COL_SIZE
 
+
+def isfloat(value):
+  try:
+    float(value)
+    return True
+  except ValueError:
+    return False
+
 class ExcelGenerator(object):
     DEFAULT_ROW_HEIGHT = 20
-    DEFAULT_ROW_LENGHT = 225
+    DEFAULT_ROW_LENGTH = 225
 
     def __init__(self, filename):
         self.__csv = CSVParser(filename)
@@ -111,21 +117,56 @@ class ExcelGenerator(object):
                 value = False
             elif value.isdigit():
                 value = int(value)
-            elif value.isfloat():
+            elif isfloat(value):
                 value = float(value)
             format[name] = value
         return format
 
+    def __reformat_worksheet(self, worksheet, ws_format):
+        format = {}
+        pieces = ws_format.replace('{', '').replace('}', '').replace(' ', '').split(',')
+        for piece in pieces:
+            name, value = piece.split(':')
+            if value == 'True':
+                value = True
+            elif value == 'False':
+                value = False
+            elif value.isdigit():
+                value = int(value)
+            elif isfloat(value):
+                value = float(value)
+            elif value.startswith('#'):      #color
+                value = value.strip('#')
+
+            if name == 'orientation':
+                if value == 'portrait':
+                    worksheet.set_portrait()
+                elif value == 'landscape':
+                    worksheet.set_landscape()
+            elif name == 'paper':
+                worksheet.set_paper(int(value))
+            elif name == 'tab_color':
+                worksheet.tab_color = value
+
     def __add_text_from_file(self, worksheet, row, col, col_count, filename, format = None):
-        fmt_regex = re.compile('(\{.+\})(.+)\n')
+        fmt_worksheet = re.compile('{{(.+)}\n')
+        fmt_regex = re.compile('\{(.+)\}(.+)\n')
+        dev_format = re.compile('(.+)(\|TEXTBOX)(.*)\n')
+
         if format is None:
             default_format = self.__formats['text']
         else:
             default_format = format
+
         with open(filename, 'rt') as text_file:
             for line in iter(text_file):
+                ws_format = fmt_worksheet.match(line.strip(' '))
+                if ws_format is not None:
+                    self.__reformat_worksheet(worksheet, ws_format.string)
+                    continue
+
                 pieces = fmt_regex.split(line)
-                if len(pieces) == 4:
+                if pieces is not None and len(pieces) == 4:
                     format = self.__parse_format(pieces[1])
                     format = self.__workbook.add_format(format)
                     line = pieces[2]
@@ -133,10 +174,23 @@ class ExcelGenerator(object):
                     format = default_format
 
                 cell = xl_rowcol_to_cell(row, col)
-                cell = cell + ':' + xl_rowcol_to_cell(row, col + col_count)
-                worksheet.merge_range(cell, line, format)
 
-                cell_height = ExcelGenerator.DEFAULT_ROW_HEIGHT * round(len(line)/ExcelGenerator.DEFAULT_ROW_LENGHT)
+                textbox = dev_format.split(line)
+                if len(textbox) > 1:
+                    line = textbox[1]
+                    width =  int(textbox[3].split(':')[1]) if textbox[3].__contains__(':') else 150
+                    col_count = 4
+                    cell = cell + ':' + xl_rowcol_to_cell(row, col + 2)
+                    worksheet.merge_range(cell, line, format)
+                    cell = xl_rowcol_to_cell(row, col + 3)
+                    cell = cell + ':' + xl_rowcol_to_cell(row, col_count + 6)
+                    worksheet.merge_range(cell, '', format)
+                    worksheet.insert_textbox(cell, '', {'width': width, 'height': 25, 'line': {'color': 'black'}})
+                else:
+                    cell = cell + ':' + xl_rowcol_to_cell(row, col + col_count)
+                    worksheet.merge_range(cell, line, format)
+
+                cell_height = ExcelGenerator.DEFAULT_ROW_HEIGHT * round(len(line) / ExcelGenerator.DEFAULT_ROW_LENGTH)
                 if cell_height < ExcelGenerator.DEFAULT_ROW_HEIGHT:
                     cell_height = ExcelGenerator.DEFAULT_ROW_HEIGHT
                 worksheet.set_row(row, cell_height)
@@ -161,7 +215,6 @@ class ExcelGenerator(object):
         worksheet.set_h_pagebreaks([next_row])
         next_row += 1
         next_row = self.__add_text_from_file(worksheet, next_row, 0, len(EXCEL_HEADERS[ExcelBlock.proposition][ExcelBlockDef.headers]), 'conditions.txt')
-
 
     def __generate_config_base(self):
         worksheet = self.__create_worksheet("Config de base")
@@ -245,4 +298,7 @@ class ExcelGenerator(object):
             row += 1
 
     def __generate_debit_form(self):
-        pass
+        worksheet = self.__create_worksheet("Débit préautorisé")
+        worksheet.tab_color = "1072BA"
+        worksheet.set_column('A:K', self.DEFAULT_ROW_LENGTH / 9)
+        self.__add_text_from_file(worksheet, 0, 0, 9, 'debit_form.txt')
