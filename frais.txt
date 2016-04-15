@@ -1,3 +1,4 @@
-{bold: True, underline: True}OBJET: Proposition de mise à jour de la Solution de facturation Purkinje
+%%{'columns': {'count': 7, 'width': 30}, 'max_char': 100}%%
+{'bold': True, 'underline': True}OBJET: Proposition de mise à jour de la Solution de facturation Purkinje
 
 FRAIS D'UTILISATION

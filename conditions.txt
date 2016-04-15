@@ -1,3 +1,4 @@
+%%{'columns': {'count': 7, 'width': 30}, 'max_char': 100}%%
 Le prix ci-devant inclut les frais d'utilisation et de soutien de la nouvelle solution de facturation infonuagique  Purkinje "version SYRA" ainsi que le soutien de la version précédente.
 
 Le paiement des frais mensuels se fera par prélèvements bancaires préautorisés. À cette fin, le client doit remplir le formulaire "Programme de débits préautorisés d’entreprise*" inclus dans le document.

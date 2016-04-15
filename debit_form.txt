@@ -1,37 +1,37 @@
-{{orientation: portrait, paper: 1, tab_color: #33cc33}}
-{align: center, bold: True}ACCORD DE DPA DU PAYEUR
-{align: center, bold: True}Programme de débits préautorisés d’entreprise*
-{align: center, bold: True}Autorisation de débits directs d’un compte du payeur, en faveur du bénéficiaire
+%%{'orientation': 'portrait', 'paper': 1, 'tab_color': '33cc33', 'columns': {'count': 5, 'width': 15}, 'max_char': 100}%%
+{'align': 'center', 'bold': True, 'font_size': 14}ACCORD DE DPA DU PAYEUR
+{'align': 'center', 'bold': True, 'font_size': 12}Programme de débits préautorisés d’entreprise*
+{'align': 'center', 'bold': True, 'font_size': 12}Autorisation de débits directs d’un compte du payeur, en faveur du bénéficiaire
 
-{bold: True}Instructions :
+{'bold': True, 'bg_color': '99ccff'}Instructions :
 1. Veuillez remplir toutes les sections et signer à la section 1
 2. Retournez le formulaire rempli, accompagné d’un chèque portant la mention «NUL», à :
 Purkinje inc. 614 rue St-Jacques, bureau 200, Montréal, Québec, H3C 1E2
 3. N’hésitez pas à vous adresser au bénéficiaire si vous avez des questions.
 
-{bold: True}1- RENSEIGNEMENTS SUR LE CLIENT
+{'bold': True, 'bg_color': '99ccff'}1- RENSEIGNEMENTS SUR LE CLIENT
 
-Nom du client :|TEXTBOX:200
-Adresse :|TEXTBOX:200
-N° de téléphone :|TEXTBOX:200
-Signature du payeur :|TEXTBOX:200
+Nom du client :{'textbox': {'start_column': 3, 'end_column': 4, 'width': 200, 'height': 20, 'line': {'color': 'black'}}}
+Adresse :{'textbox': {'start_column': 3, 'end_column': 4, 'width': 200, 'height': 20, 'line': {'color': 'black'}}}
+N° de téléphone :{'textbox': {'start_column': 3, 'end_column': 4, 'width': 200, 'height': 20, 'line': {'color': 'black'}}}
+Signature du payeur :{'textbox': {'start_column': 3, 'end_column': 4, 'width': 200, 'height': 20, 'line': {'color': 'black'}}}
 
-Date :|TEXTBOX
+{'height':25}Date :{'textbox': {'start_column': 3, 'end_column': 4, 'width': 150, 'height': 24, 'line': {'color': 'black'}}}
 
 
-{bold: True}2- ÉTABLISSEMENT FINANCIER ET RENSEIGNEMENTS BANCAIRES DU CLIENT
+{'bold': True, 'bg_color': '99ccff'}2- ÉTABLISSEMENT FINANCIER ET RENSEIGNEMENTS BANCAIRES DU CLIENT
 
 (Veuillez taper ou inscrire lisiblement en caractères d’imprimerie)
-Numéro de succursale (5 caractères)|TEXTBOX:300
-N°d’établissement (3 caractères)|TEXTBOX:300
-Numéro de compte|TEXTBOX:300
-Dénomination de l’établissement financier|TEXTBOX:300
-Succursale|TEXTBOX:300
-Adresse de la succursale|TEXTBOX:300
-Ville (province) Code postale|TEXTBOX:300
+Numéro de succursale (5 caractères){'textbox': {'start_column': 3, 'end_column': 4, 'width': 200, 'height': 20, 'line': {'color': 'black'}}}
+N°d’établissement (3 caractères){'textbox': {'start_column': 3, 'end_column': 4, 'width': 200, 'height': 20, 'line': {'color': 'black'}}}
+Numéro de compte{'textbox': {'start_column': 3, 'end_column': 4, 'width': 200, 'height': 20, 'line': {'color': 'black'}}}
+Dénomination de l’établissement financier{'textbox': {'start_column': 3, 'end_column': 4, 'width': 200, 'height': 20, 'line': {'color': 'black'}}}
+Succursale{'textbox': {'start_column': 3, 'end_column': 4, 'width': 200, 'height': 20, 'line': {'color': 'black'}}}
+Adresse de la succursale{'textbox': {'start_column': 3, 'end_column': 4, 'width': 200, 'height': 20, 'line': {'color': 'black'}}}
+Ville (province) Code postale{'textbox': {'start_column': 3, 'end_column': 4, 'width': 200, 'height': 20, 'line': {'color': 'black'}}}
 
 
-{bold: True}3- RENSEIGNEMENTS SUR LES PAIEMENTS (veuillez taper ou inscrire lisiblement en caractère
+{'bold': True, 'bg_color': '99ccff'}3- RENSEIGNEMENTS SUR LES PAIEMENTS (veuillez taper ou inscrire lisiblement en caractère
 d’imprimerie)
 
 Montant :	$68.00
