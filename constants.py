@@ -22,21 +22,33 @@ class ListEnum(list):
 
 OUI_NON = {'T': 'Oui', 'F': 'False', None: ''}
 
+ExcelBlock = ListEnum(['attention_de', 'agent_purkinje', 'proposition', 'site', 'customer', 'user', 'md', 'institution', 'user_access'])
 ExcelBlockDef = ListEnum(['section', 'headers'])
-ExcelBlock = ListEnum(['customer', 'user', 'md', 'institution', 'user_access'])
-CSVBlocks = ListEnum(['Page2Top', 'Page2Left', 'Page2Right', 'Page3', 'Page4'])
-
-MatchingBlocks = { CSVBlocks.Page2Top: ExcelBlock.customer, CSVBlocks.Page2Left: ExcelBlock.user, CSVBlocks.Page2Right: ExcelBlock.md,
-     CSVBlocks.Page3: ExcelBlock.institution, CSVBlocks.Page4: ExcelBlock.user_access}
 
 EXCEL_HEADERS = dict(
+    attention_de={
+        ExcelBlockDef.section: [''],
+        ExcelBlockDef.headers: ['Nom du client / Agence:', 'Attention', 'Rue', 'Ville', 'Code postal']
+    },
+    agent_purkinje={
+        ExcelBlockDef.section: [''],
+        ExcelBlockDef.headers: ['Date:', 'Agent Purkinje:', 'Téléphone:', 'Fax:', 'Courriel']
+    },
+    proposition={
+        ExcelBlockDef.section: [''],
+        ExcelBlockDef.headers: ['Numéro de pratique', 'Nom', 'Prénom', 'Spécialité', 'Qté', 'Mensualité', 'Mensualité\nTotale']
+    },
+    site={
+        ExcelBlockDef.section: [''],
+        ExcelBlockDef.headers: ['Nom', 'Adresse,Ville', 'Code Postal', 'Province', 'Pays', 'Telephone', 'Fax']
+    },
     customer={
         ExcelBlockDef.section: [''],
         ExcelBlockDef.headers: ['Nom du client / Agence', 'Numéro d''agence', 'Mot de passe TIP-I', 'Ville']
     },
     user={
         ExcelBlockDef.section: ['Utilisateurs'],
-        ExcelBlockDef.headers: ['Nom d''utilisateur (Username)', 'Mot de passe', 'Nom', 'Prénom']
+        ExcelBlockDef.headers: ['Nom d''utilisateur (Username)', 'Mot de passe', 'Nom', 'Prénom', 'System d''opération']
     },
     md={
         ExcelBlockDef.section: ['Médecins'],
@@ -51,7 +63,17 @@ EXCEL_HEADERS = dict(
                               'Secteurs Centre hospitalier']
     },
     user_access={
-        ExcelBlockDef.section: ['Accès utilisateurs', 'Médecin-Groupe'],
+        ExcelBlockDef.section: ['Accès utilisateurs'],
         ExcelBlockDef.headers: ['Nom d''utilisateur', 'Médecin-Groupe']
     })
 
+
+COL_SIZE = dict(
+    #                   A   B  C   D   E   F   G   H   I
+    proposition     = [25, 25, 25, 25, 25, 25, 25, 25, 25],
+    customer        = [20, 20, 20, 20, 60, 15, 15, 15, 20],
+    institution     = [15, 15, 15, 15, 15, 15, 15, 15, 25],
+    user_access     = [25, 25]
+)
+
+OS_LIST = ['Windows XP', 'Windows 7, 8 ou 10', 'Windows 2008 ou 20012', 'OSX (Apple)']
