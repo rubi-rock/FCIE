@@ -1,0 +1,12 @@
+{'style': {'name' : 'section', 'properties': {'border': 6, 'bold': True, 'font_name': 'Times New Roman'}}}
+{'style': {'name' : 'header', 'properties': {'border': 6, 'bold': False, 'font_name': 'Times New Roman'}}}
+{'style': {'name' : 'cell', 'properties': {'valign': 'top', 'text_wrap': True, 'border': 1}}}
+{'style': {'name' : 'cell_percent', 'properties': {'valign': 'top', 'num_format': '0.0%', 'text_wrap': True, 'border': 1}}}
+{'style': {'name' : 'cell_dollard', 'properties': {'valign': 'top', 'num_format': '$0.00', 'text_wrap': True, 'border': 1}}}
+{'style': {'name' : 'text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11'}}}
+
+{'tab': 'tab_proposition'}
+{'tab': 'tab_config_base'}
+{'tab': 'tab_institution'}
+{'tab': 'tab_user_access'}
+{'tab': 'tab_debit'}

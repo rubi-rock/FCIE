@@ -20,30 +20,30 @@ class ListEnum(list):
     def as_list(self):
         return self.__enum_list
 
-OUI_NON = {'T': 'Oui', 'F': 'False', None: ''}
+OUI_NON = {'T': 'Oui', 'F': 'Non', None: ''}
 
 ExcelBlock = ListEnum(['attention_de', 'agent_purkinje', 'proposition', 'site', 'customer', 'user', 'md', 'institution', 'user_access'])
 ExcelBlockDef = ListEnum(['section', 'headers'])
 
 EXCEL_HEADERS = dict(
     attention_de={
-        ExcelBlockDef.section: [''],
+        ExcelBlockDef.section: [],
         ExcelBlockDef.headers: ['Nom du client / Agence:', 'Attention', 'Rue', 'Ville', 'Code postal']
     },
     agent_purkinje={
-        ExcelBlockDef.section: [''],
+        ExcelBlockDef.section: [],
         ExcelBlockDef.headers: ['Date:', 'Agent Purkinje:', 'Téléphone:', 'Fax:', 'Courriel']
     },
     proposition={
-        ExcelBlockDef.section: [''],
+        ExcelBlockDef.section: [],
         ExcelBlockDef.headers: ['Numéro de pratique', 'Nom', 'Prénom', 'Spécialité', 'Qté', 'Mensualité', 'Mensualité\nTotale']
     },
     site={
-        ExcelBlockDef.section: [''],
+        ExcelBlockDef.section: [],
         ExcelBlockDef.headers: ['Nom', 'Adresse,Ville', 'Code Postal', 'Province', 'Pays', 'Telephone', 'Fax']
     },
     customer={
-        ExcelBlockDef.section: [''],
+        ExcelBlockDef.section: [],
         ExcelBlockDef.headers: ['Nom du client / Agence', 'Numéro d''agence', 'Mot de passe TIP-I', 'Ville']
     },
     user={

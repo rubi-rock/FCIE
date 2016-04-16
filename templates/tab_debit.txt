@@ -1,0 +1,4 @@
+{'name': 'Débit préautorisé', 'orientation': 'portrait', 'paper': 1, 'tab_color': '1072BA', 'columns': {'count': 7, 'width': 15}, 'max_char': 100}
+{'header' : {'format': '&L&G&R&F', 'options': {'image_left': 'purkinje.png'}}}
+{'footer' : {'format': '&L&A&CPage &P / &N&R&D'}}
+{'section': 'debit_form'}

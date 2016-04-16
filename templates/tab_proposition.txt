@@ -1,0 +1,22 @@
+{'name': 'Proposition Financière', 'orientation': 'portrait', 'paper': 1, 'tab_color': '1072BA', 'margins': [0.5, 0.5, 1.5, 0.8], 'columns': {'width': [25, 25, 25, 25, 25, 25, 25, 25, 25]}, 'max_char': 225}
+{'header' : {'format': '&L&G&R&F', 'options': {'image_left': 'purkinje.png'}}}
+{'footer' : {'format': '&L&A&CPage &P / &N&R&D'}}
+
+{'col': 'A1', 'style': 'section', 'values': ['Nom du client / Agence:', 'Attention', 'Rue', 'Ville', 'Code postal']}
+{'col': 'B1', 'style': 'cell', 'values': [None, None, None, None, None]}
+
+{'col': 'F1', 'style': 'section', 'values': ['Date:', 'Agent Purkinje:', 'Téléphone:', 'Fax:', 'Courriel:']}
+{'col': 'G1', 'style': 'cell', 'values': [None, None, None, None, None]}
+
+{'row': 'A8', 'style': 'section', 'values': ['Numéro de pratique', 'Nom', 'Prénom', 'Spécialité', 'Qté', 'Mensualité', 'Mensualité\nTotale']}
+{'col': 'A9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 0}
+{'col': 'B9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 1}
+{'col': 'C9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 2}
+{'col': 'D9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 3}
+{'col': 'E9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 4, 'validation': {'validate': 'list', 'source': ['Oui', 'Non', ' ']}}
+{'col': 'F9', 'style': 'cell_dollard', 'spare_rows': 5, 'loop': 'md', 'value': 68}
+
+
+
+
+

@@ -1,0 +1,29 @@
+{'name': 'Config Base', 'orientation': 'landscape', 'paper': 5, 'tab_color': '1072BA', 'columns': {'width': [20, 20, 20, 20, 60, 15, 15, 15, 20]}, 'max_char': 225}
+{'header' : {'format': '&L&G&R&F', 'options': {'image_left': 'purkinje.png'}}}
+{'footer' : {'format': '&L&A&CPage &P / &N&R&D'}}
+
+{'row': 'A1', 'style': 'section', 'values': ['Nom du client / Agence', 'Numéro d''agence', 'Mot de passe TIP-I', 'Ville']}
+{'col': 'A2', 'style': 'cell', 'spare_rows': 2, 'loop': 'customer'}
+{'col': 'B2', 'style': 'cell', 'spare_rows': 2, 'loop': 'customer', 'index': 0}
+{'col': 'C2', 'style': 'cell', 'spare_rows': 2, 'loop': 'customer', 'index': 0}
+{'col': 'D2', 'style': 'cell', 'spare_rows': 2, 'loop': 'customer', 'remember_last_row' : True}
+
+{'cell': 'A:last_row+3', 'style': 'section', 'value': 'Utilisateurs'}
+{'row': 'A:last_row+4', 'style': 'section', 'values': ['Nom d''utilisateur (Username)', 'Mot de passe', 'Nom', 'Prénom', 'System d''opération']}
+{'col': 'A:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'user'}
+{'col': 'B:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'index': 0}
+{'col': 'C:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'index': 1}
+{'col': 'D:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'user'}
+{'col': 'E:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'value': '[ ]Windows XP\n[ ]Windows 7, 8 ou 10\n[ ]Windows 2008 ou 20012\n[ ]OSX (Apple)', 'remember_last_row' : True}
+
+{'cell': 'A:last_row+3', 'style': 'section', 'value': 'Médecins'}
+{'row': 'A:last_row+4', 'style': 'section', 'values': ['Numéro de pratique', 'Numéro de groupe', 'Nom', 'Prénom', 'Spécialité', 'RMX (oui/non)', 'Inc (oui/non)', 'Nom compagnie', 'Date fin année fiscale inc']}
+{'col': 'A:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 0, 'cast': 'cell_as_int' }
+{'col': 'B:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 1, 'cast': 'cell_as_int' }
+{'col': 'C:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 2}
+{'col': 'D:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 3}
+{'col': 'E:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 4}
+{'col': 'F:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 5, 'cast': 'cell_as_oui_non'}
+{'col': 'G:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md'}
+{'col': 'H:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md'}
+{'col': 'I:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md'}

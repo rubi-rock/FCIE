@@ -1,6 +1,6 @@
 import re
 import xlsxwriter
-from xlsxwriter.utility import xl_rowcol_to_cell, xl_range
+from xlsxwriter.utility import xl_rowcol_to_cell, xl_cell_to_rowcol
 import ast
 
 from csv_parser import CSVParser
@@ -8,11 +8,12 @@ from constants import EXCEL_HEADERS, ExcelBlockDef, ExcelBlock, OUI_NON, OS_LIST
 
 
 def isfloat(value):
-  try:
-    float(value)
-    return True
-  except ValueError:
-    return False
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
 
 class ExcelGenerator(object):
     DEFAULT_ROW_HEIGHT = 20
@@ -25,16 +26,20 @@ class ExcelGenerator(object):
         self.__OS_list = '\n'.join(['[ ] ' + os for os in OS_LIST])
 
         self.__formats = {}
-        self.__init_formats()
+        self.__build_document()
 
-        self.__generate_proposition()
-        self.__generate_config_base()
-        self.__generate_institution()
-        self.__generate_user_access()
-        self.__generate_debit_form()
+#        self.__generate_proposition()
+#        self.__generate_config_base()
+#        self.__generate_institution()
+#        self.__generate_user_access()
+#        self.__generate_debit_form()
         self.__workbook.close()
 
-    def __write_section(self, worksheet, row, col, section, align = 'horizontal'):
+    @staticmethod
+    def get_template_name(filename):
+        return 'templates/{0}.txt'.format(filename)
+
+    def __write_section(self, worksheet, row, col, section, align='horizontal'):
         for section in section:
             cell = xl_rowcol_to_cell(row, col)
             worksheet.write(cell, section, self.__formats['section'])
@@ -43,16 +48,15 @@ class ExcelGenerator(object):
             else:
                 row += 1
 
-    def __write_empty_cells(self, worksheet, row, col, section, align = 'horizontal'):
-        for section in section:
-            cell = xl_rowcol_to_cell(row, col)
-            worksheet.write(cell, None, self.__formats['cell'])
+    def __write_empty_cells(self, worksheet, row, col, section, align='horizontal'):
+        for offset in range[len(section)]:
             if align == 'horizontal':
-                col += 1
+                cell = xl_rowcol_to_cell(row, col + offset)
             else:
-                row += 1
+                cell = xl_rowcol_to_cell(row + offset, col)
+            worksheet.write(cell, None, self.__formats['cell'])
 
-    def __write_headers(self, worksheet, row, col, headers, format = None):
+    def __write_headers(self, worksheet, row, col, headers, format=None):
         if format is None:
             format = self.__formats['header']
         for header in headers:
@@ -60,15 +64,11 @@ class ExcelGenerator(object):
             worksheet.write(cell, header, format)
             col += 1
 
-    def __write_cell(self, worksheet, row, col, value, format = None):
+    def __write_cell(self, worksheet, row, col, value, format=None):
         if format is None:
             format = self.__formats['cell']
         cell = xl_rowcol_to_cell(row, col)
         worksheet.write(cell, value, format)
-
-    def __set_col_sizes(self, worksheet, block):
-        if block not in COL_SIZE.keys():
-            return
 
         sizes = COL_SIZE[block]
         col_num = 0
@@ -76,17 +76,31 @@ class ExcelGenerator(object):
             worksheet.set_column(col_num, col_num, size)
             col_num += 1
 
-    def __cell_as_int(self, cell_value):
+    @staticmethod
+    def cell_as_int(cell_value):
         return int(cell_value) if cell_value is not None else None
 
-    def __init_formats(self):
-        self.__formats['section'] = self.__workbook.add_format(
-            {'border': 6, 'bold': True, 'font_name': 'Times New Roman'})
-        self.__formats['header'] = self.__workbook.add_format(
-            {'border': 6, 'bold': False, 'font_name': 'Times New Roman'})
-        self.__formats['cell'] = self.__workbook.add_format({'valign': 'top', 'text_wrap': True, 'border': 1})
-        self.__formats['cell_percent'] = self.__workbook.add_format({'valign': 'top', 'num_format': '0.0%', 'text_wrap': True, 'border': 1})
-        self.__formats['text'] = self.__workbook.add_format({'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11'})
+    @staticmethod
+    def cell_as_oui_non(cell_value):
+        value = OUI_NON[cell_value]
+        return value
+
+    def __build_document(self):
+        template = self.get_template_name('document_template')
+        with open(template, 'rt') as text_file:
+            for line in iter(text_file):
+                if line.strip() == '':
+                    continue
+                params = ast.literal_eval(line)
+                if 'style' in params.keys():
+                    self.__add_format(params['style'])
+                elif 'tab' in params.keys():
+                    self.__build_worksheet(params['tab'])
+
+    def __add_format(self, style):
+        name = style['name']
+        properties = style['properties']
+        self.__formats[name] = self.__workbook.add_format(properties)
 
     def __create_worksheet(self, name):
         worksheet = self.__workbook.add_worksheet(name)
@@ -96,6 +110,211 @@ class ExcelGenerator(object):
         worksheet.set_header('&L&G&R&F', {'image_left': 'purkinje.png'})
         worksheet.set_footer('&L&A&CPage &P / &N&R&D')
         return worksheet
+
+    @staticmethod
+    def __reformat_worksheet(worksheet, ws_format):
+        for name, value in ws_format.items():
+            if name == 'orientation':
+                if value == 'portrait':
+                    worksheet.set_portrait()
+                elif value == 'landscape':
+                    worksheet.set_landscape()
+            elif name == 'paper':
+                worksheet.set_paper(int(value))
+            elif name == 'margins':
+                worksheet.set_margins(value)
+            elif name == 'tab_color':
+                worksheet.tab_color = value
+            elif name == 'columns':
+                if type(value['width']) is int:
+                    cols = 'A:' + chr(ord('A') + value['count'])
+                    worksheet.set_column(cols, value['width'])
+                elif type(value['width']) is list:
+                    i = 0
+                    for col_width in value['width']:
+                        col_cel = chr(ord('A') + i)
+                        col_cel = col_cel + ':' + col_cel
+                        worksheet.set_column(col_cel, col_width)
+                        i += 1
+
+            elif name == 'tab_color':
+                worksheet.column_width = value
+
+    def __instanciate_worksheet(self, ws_definition):
+        worksheet = self.__workbook.add_worksheet(ws_definition['name'])
+        self.__reformat_worksheet(worksheet, ws_definition['format'])
+        worksheet.set_margins(0.5, 0.5, 1.5, 0.8)
+        if ws_definition['header'] is not None and ws_definition['header']['format'] is not None:
+            worksheet.set_header(ws_definition['header']['format'], ws_definition['header']['options'])
+        if ws_definition['footer'] is not None and ws_definition['footer']['format'] is not None:
+            worksheet.set_footer(ws_definition['footer']['format'], ws_definition['footer']['options'] if 'option' in ws_definition['footer'].keys() else None)
+        return worksheet
+
+    def __build_worksheet(self, filename):
+        ws_definition = { 'name': '',  'format': {'format': None, 'options': None}, 'content': [], 'header': {'format': None, 'options': None}, 'footer': {}}
+        with open(self.get_template_name(filename), 'rt') as text_file:
+            for line in iter(text_file):
+                if line.strip() == '':
+                    continue
+                params = ast.literal_eval(line)
+                if 'name' in params.keys():
+                    ws_definition['name'] = params['name']
+                    params.pop('name')
+                    ws_definition['format'] = params
+                elif 'section' in params.keys():
+                    ws_definition['content'].append(params)
+                elif 'header' in params.keys():
+                    ws_definition['header'] = params['header']
+                elif 'footer' in params.keys():
+                    ws_definition['footer'] = params['footer']
+                elif 'cell' in params.keys():
+                    ws_definition['content'].append(params)
+                elif 'col' in params.keys():
+                    ws_definition['content'].append(params)
+                elif 'row' in params.keys():
+                    ws_definition['content'].append(params)
+
+        worksheet =  self.__instanciate_worksheet(ws_definition)
+
+        last_row, last_column = 0, 0
+        for item in ws_definition['content']:
+            if 'cell' in item.keys():
+                lr, lc = self.__fill_cell(worksheet, item, last_row, last_column)
+            elif 'col' in item.keys():
+                lr, lc = self.__fill_col(worksheet, item, last_row, last_column)
+            elif 'row' in item.keys():
+                lr, lc = self.__fill_row(worksheet, item, last_row, last_column)
+            if 'remember_last_row' in item:
+                last_row = lr
+            if 'remember_last_column' in item:
+                last_column = lc
+
+        return worksheet
+
+    @staticmethod
+    def __substitute_last_coords(cell, last_row, last_column):
+        pieces = cell.split(':')
+        if len(pieces) == 1:
+            return cell
+
+        if 'last_column' == pieces[0]:
+            py_code = pieces[0]
+            pieces[0] = chr(ord('A') + eval(py_code))
+
+        if 'last_row' in pieces[1]:
+            py_code = pieces[1]
+            pieces[1] = str(eval(py_code))
+
+        cell = pieces[0]  + pieces[1]
+        return cell
+
+    @staticmethod
+    def __get_casted_value(value, definition):
+        if value is None:
+            return value
+
+        if 'cast' in definition:
+            obj_method = getattr(ExcelGenerator, definition['cast'])
+            if obj_method is not None and callable(obj_method):
+                return obj_method(value)
+        return value
+
+    def __fill_cell(self, worksheet, item, last_row, last_column):
+        cell = item['cell']
+        cell = self.__substitute_last_coords(cell, last_row, last_column)
+        style = item['style'] if 'style' in item else None
+        if type(style) is str:
+            format = self.__formats[style]
+        else:
+            format = self.__workbook.add_format(style)
+        value = item['value'] if 'value' in item else None
+        worksheet.write(cell, self.__get_casted_value(value, item), format)
+        row, col = xl_cell_to_rowcol(cell)
+        return row, col
+
+    def __fill_col(self, worksheet, item, last_row, last_column):
+        col = item['col']
+        col = self.__substitute_last_coords(col, last_row, last_column)
+        row, col = xl_cell_to_rowcol(col)
+        style = item['style'] if 'style' in item else None
+        if type(style) is str:
+            format = self.__formats[style]
+        else:
+            format = self.__workbook.add_format(style)
+
+        if 'loop' in item.keys():
+            value_list = self.__csv.values[item['loop']]
+        else:
+            value_list = None
+
+        row_offset = 0
+        if value_list is not None:
+            idx = item['index'] if 'index' in item.keys() else None
+            if idx is None:
+                value = item['value'] if 'value' in item.keys() else None
+            for csv_values in value_list:
+                cell = xl_rowcol_to_cell(row + row_offset, col)
+                if idx is not None:
+                    value = csv_values[idx]
+                worksheet.write(cell, self.__get_casted_value(value, item), format)
+                if 'validation' in item.keys():
+                    worksheet.data_validation(cell, item['validation'].copy())
+                row_offset += 1
+        else:
+            for value in item['values']:
+                cell = xl_rowcol_to_cell(row, col + row_offset)
+                worksheet.write(cell, self.__get_casted_value(value, item), format)
+                if 'validation' in item.keys():
+                    worksheet.data_validation(cell, item['validation'].copy())
+                row_offset += 1
+
+        if 'spare_rows' in item:
+            for i in range(item['spare_rows']):
+                cell = xl_rowcol_to_cell(row + row_offset, col)
+                worksheet.write(cell, None, format)
+                if 'validation' in item.keys():
+                    worksheet.data_validation(cell, item['validation'].copy())
+                row_offset += 1
+
+        return row + row_offset, col
+
+    def __fill_row(self, worksheet, item, last_row, last_column):
+        row = item['row']
+        row = self.__substitute_last_coords(row, last_row, last_column)
+        row, col = xl_cell_to_rowcol(row)
+        style = item['style'] if 'style' in item else None
+        if type(style) is str:
+            format = self.__formats[style]
+        else:
+            format = self.__workbook.add_format(style)
+
+        if 'loop' in item.keys():
+            value_list = self.__csv.values[item['loop']]
+        else:
+            value_list = None
+
+        row_offset = 0
+        col_ofsset = 0
+        if value_list is not None:
+            for csv_values in value_list:
+                for idx in item['indexes']:
+                    cell = xl_rowcol_to_cell(row + row_offset, col + col_ofsset)
+                    value = csv_values[idx] if idx is not None else None
+                    worksheet.write(cell, self.__get_casted_value(value, item), format)
+                    if 'validation' in item.keys():
+                        worksheet.data_validation(cell, item['validation'].copy())
+                    col_ofsset += 1
+                row_offset += 1
+                col_ofsset = 0
+        else:
+            for value in item['values']:
+                cell = xl_rowcol_to_cell(row, col + col_ofsset)
+                worksheet.write(cell, self.__get_casted_value(value, item), format)
+                if 'validation' in item.keys():
+                    worksheet.data_validation(cell, item['validation'].copy())
+                col_ofsset += 1
+
+        return row + row_offset, col + col_ofsset
 
     def __add_text_lines(self, worksheet, row, col, col_count, lines, format = None):
         if format is None:
@@ -107,29 +326,13 @@ class ExcelGenerator(object):
             row += 1
         return row
 
-    def __parse_format(self, str_format):
+    @staticmethod
+    def __parse_format(str_format):
         format = ast.literal_eval(str_format)
         return format
 
-    def __reformat_worksheet(self, worksheet, ws_format):
-        for name, value in ws_format.items():
-            if name == 'orientation':
-                if value == 'portrait':
-                    worksheet.set_portrait()
-                elif value == 'landscape':
-                    worksheet.set_landscape()
-            elif name == 'paper':
-                worksheet.set_paper(int(value))
-            elif name == 'tab_color':
-                worksheet.tab_color = value
-            elif name == 'columns':
-                cols = 'A:' + chr(ord('A') + value['count'])
-                worksheet.set_column(cols, value['width'])
-            elif name == 'tab_color':
-                worksheet.column_width = value
-
     def __process_tab_formatting(self, worksheet, line):
-        fmt_worksheet = re.compile('^\s*\%\%({.+})\%\%\n')
+        fmt_worksheet = re.compile('^\s*%%({.+})%%\n')
         ws_format = fmt_worksheet.split(line.replace(' ', ''))
         if ws_format is not None and len(ws_format) > 1:
             ws_format = ast.literal_eval(ws_format[1])
@@ -140,11 +343,16 @@ class ExcelGenerator(object):
 
     def __process_line_formatting(self, line, default_format):
         height = None
-        fmt_line = re.compile('^\s*(\{.+\})(.+)$')
-        pieces = fmt_line.split(line.replace(' ', ''))
+        pieces = ast.literal_eval(line)
+        fmt_line = re.compile('^\s*(\{.+\})\s*(.+)$')
+        pieces = fmt_line.split(line)
         if pieces is not None and len(pieces) == 4:
             format = ast.literal_eval(pieces[1])
-            height = format['heigt'] if 'height' in format else None
+            if 'height' in format:
+                height = format['height']
+                format.pop('height')
+            else:
+                height = None
             format = self.__workbook.add_format(format)
             line = pieces[2]
         else:
@@ -152,7 +360,8 @@ class ExcelGenerator(object):
 
         return line, format, height
 
-    def __add_textbox(self, worksheet, row, textbox):
+    @staticmethod
+    def __add_textbox(worksheet, row, textbox):
         textbox = ast.literal_eval(textbox.replace(' ', ''))
         cell = xl_rowcol_to_cell(row, textbox['start_column'])
         textbox.pop('start_column')
@@ -169,10 +378,9 @@ class ExcelGenerator(object):
         else:
             default_format = format
 
-        with open(filename, 'rt') as text_file:
+        with open(self.get_template_name(filename), 'rt') as text_file:
             tab_format = None
             for line in iter(text_file):
-                cell_height = None
                 tmp = self.__process_tab_formatting(worksheet, line)
                 tab_format = tmp if tmp is not None else tab_format
                 if tmp is not None:
@@ -204,9 +412,7 @@ class ExcelGenerator(object):
         return row
 
     def __generate_proposition(self):
-        worksheet = self.__create_worksheet("Proposition Financière")
-        worksheet.tab_color = "663300"
-        self.__set_col_sizes(worksheet, ExcelBlock.proposition)
+        worksheet = self.__build_worksheet('proposition_tab')
         # Customer
         self.__write_section(worksheet, 0, 0, EXCEL_HEADERS[ExcelBlock.attention_de][ExcelBlockDef.headers], 'vertical')
         self.__write_empty_cells(worksheet, 0, 1, EXCEL_HEADERS[ExcelBlock.attention_de][ExcelBlockDef.headers], 'vertical')
@@ -214,18 +420,16 @@ class ExcelGenerator(object):
         self.__write_section(worksheet, 0, 5, EXCEL_HEADERS[ExcelBlock.agent_purkinje][ExcelBlockDef.headers], 'vertical')
         self.__write_empty_cells(worksheet, 0, 6, EXCEL_HEADERS[ExcelBlock.agent_purkinje][ExcelBlockDef.headers], 'vertical')
         # Fees
-        next_row = self.__add_text_from_file(worksheet, 8, 0, 'frais.txt')
+        next_row = self.__add_text_from_file(worksheet, 8, 0, 'frais')
         self.__write_section(worksheet, next_row, 0, EXCEL_HEADERS[ExcelBlock.proposition][ExcelBlockDef.headers])
         next_row += 2
-        next_row = self.__add_text_from_file(worksheet, next_row, 0, 'frais_note.txt')
+        next_row = self.__add_text_from_file(worksheet, next_row, 0, 'frais_note')
         worksheet.set_h_pagebreaks([next_row])
         next_row += 1
-        next_row = self.__add_text_from_file(worksheet, next_row, 0, 'conditions.txt')
+        self.__add_text_from_file(worksheet, next_row, 0, 'conditions')
 
     def __generate_config_base(self):
-        worksheet = self.__create_worksheet("Config de base")
-        worksheet.tab_color = "FF3300"
-        self.__set_col_sizes(worksheet, ExcelBlock.customer)
+        worksheet = self.__build_worksheet('config_base')
         self.__write_section(worksheet, 0, 0, EXCEL_HEADERS[ExcelBlock.customer][ExcelBlockDef.section])
         self.__write_headers(worksheet, 1, 0, EXCEL_HEADERS[ExcelBlock.customer][ExcelBlockDef.headers])
         self.__write_section(worksheet, 4, 0, EXCEL_HEADERS[ExcelBlock.user][ExcelBlockDef.section])
@@ -255,8 +459,8 @@ class ExcelGenerator(object):
         mds = self.__csv.values[ExcelBlock.md]
         #row = 6
         for md in mds:
-            self.__write_cell(worksheet, row, 0, self.__cell_as_int(md[0]))  # Numero de pratique
-            self.__write_cell(worksheet, row, 1, self.__cell_as_int(md[1]))  # Numero de groupe
+            self.__write_cell(worksheet, row, 0, self.cell_as_int(md[0]))  # Numero de pratique
+            self.__write_cell(worksheet, row, 1, self.cell_as_int(md[1]))  # Numero de groupe
             self.__write_cell(worksheet, row, 2, md[2])  # Nom
             self.__write_cell(worksheet, row, 3, md[3])  # Prénon
             self.__write_cell(worksheet, row, 4, md[4])  # Specialité
@@ -267,9 +471,7 @@ class ExcelGenerator(object):
             row += 1
 
     def __generate_institution(self):
-        worksheet = self.__create_worksheet("Établissement")
-        worksheet.tab_color = "96FF33"
-        self.__set_col_sizes(worksheet, ExcelBlock.institution)
+        worksheet = self.__build_worksheet('institution_tab')
         self.__write_section(worksheet, 0, 0, EXCEL_HEADERS[ExcelBlock.institution][ExcelBlockDef.section])
         self.__write_headers(worksheet, 1, 0, EXCEL_HEADERS[ExcelBlock.institution][ExcelBlockDef.headers])
         worksheet.set_column('A:H', 15)
@@ -278,11 +480,11 @@ class ExcelGenerator(object):
         mds = self.__csv.values[ExcelBlock.institution]
         row = 2
         for md in mds:
-            self.__write_cell(worksheet, row, 0, self.__cell_as_int(md[0]))  # Numero de pratique
-            self.__write_cell(worksheet, row, 1, self.__cell_as_int(md[1]))  # Numero de groupe
-            self.__write_cell(worksheet, row, 2, self.__cell_as_int(md[2]))  # Numero d'etblissement
+            self.__write_cell(worksheet, row, 0, self.cell_as_int(md[0]))  # Numero de pratique
+            self.__write_cell(worksheet, row, 1, self.cell_as_int(md[1]))  # Numero de groupe
+            self.__write_cell(worksheet, row, 2, self.cell_as_int(md[2]))  # Numero d'etblissement
             self.__write_cell(worksheet, row, 3, md[3])  # Nom d'etablissement
-            self.__write_cell(worksheet, row, 4, float(md[4].strip('%'))/100 if md[4] != None else None, self.__formats['cell_percent'])  # Pourcentage
+            self.__write_cell(worksheet, row, 4, float(md[4].strip('%'))/100 if md[4] is not None else None, self.__formats['cell_percent'])  # Pourcentage
             self.__write_cell(worksheet, row, 5, OUI_NON[md[5]])  # RMX (oui/non)
             self.__write_cell(worksheet, row, 6, OUI_NON[md[6]])  # Secteur Cabinet (oui/non)
             self.__write_cell(worksheet, row, 7, None)  # Secteur CLSC
@@ -290,9 +492,7 @@ class ExcelGenerator(object):
             row += 1
 
     def __generate_user_access(self):
-        worksheet = self.__create_worksheet("Accès utilisateurs")
-        worksheet.tab_color = "1072BA"
-        self.__set_col_sizes(worksheet, ExcelBlock.user_access)
+        worksheet = self.__build_worksheet('user_access_tab')
         self.__write_section(worksheet, 0, 0, EXCEL_HEADERS[ExcelBlock.user_access][ExcelBlockDef.section])
         self.__write_headers(worksheet, 1, 0, EXCEL_HEADERS[ExcelBlock.user_access][ExcelBlockDef.headers])
         # User Access
@@ -304,7 +504,4 @@ class ExcelGenerator(object):
             row += 1
 
     def __generate_debit_form(self):
-        worksheet = self.__create_worksheet("Débit préautorisé")
-        worksheet.tab_color = "1072BA"
-        worksheet.set_column('A:K', self.DEFAULT_ROW_LENGTH / 9)
-        self.__add_text_from_file(worksheet, 0, 0, 'debit_form.txt')
+        self.__build_worksheet('debit_tab')

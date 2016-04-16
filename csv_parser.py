@@ -2,10 +2,11 @@ import csv
 from io import StringIO
 from constants import ExcelBlock
 
+
 class CSVParser(object):
     def __init__(self, filename):
         self.__values = {}
-        self.__spare = 5
+        self.__spare = 0
         self.__parse(filename)
         self.__add_spare()
         pass
@@ -45,7 +46,7 @@ class CSVParser(object):
                     csv_stream = StringIO(line)
                     csv_line = csv.reader(csv_stream, delimiter=',', quotechar='"')
                     csv_line = next(csv_line)
-                    csv_line = [None if col=='' else col for col in csv_line]
+                    csv_line = [None if col == '' else col for col in csv_line]
                     self.__values[excel_block].append(csv_line)
 
     @property
