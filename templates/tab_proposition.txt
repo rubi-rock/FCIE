@@ -9,12 +9,13 @@
 {'col': 'G1', 'style': 'cell', 'values': [None, None, None, None, None]}
 
 {'row': 'A8', 'style': 'section', 'values': ['Numéro de pratique', 'Nom', 'Prénom', 'Spécialité', 'Qté', 'Mensualité', 'Mensualité\nTotale']}
-{'col': 'A9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 0}
-{'col': 'B9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 1}
+{'col': 'A9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 0, 'cast': 'cell_as_int'}
+{'col': 'B9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 1, 'cast': 'cell_as_int'}
 {'col': 'C9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 2}
 {'col': 'D9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 3}
 {'col': 'E9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 4, 'validation': {'validate': 'list', 'source': ['Oui', 'Non', ' ']}}
 {'col': 'F9', 'style': 'cell_dollard', 'spare_rows': 5, 'loop': 'md', 'value': 68}
+{'col': 'G9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md'}
 
 
 

@@ -18,8 +18,8 @@
 
 {'cell': 'A:last_row+3', 'style': 'section', 'value': 'Médecins'}
 {'row': 'A:last_row+4', 'style': 'section', 'values': ['Numéro de pratique', 'Numéro de groupe', 'Nom', 'Prénom', 'Spécialité', 'RMX (oui/non)', 'Inc (oui/non)', 'Nom compagnie', 'Date fin année fiscale inc']}
-{'col': 'A:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 0, 'cast': 'cell_as_int' }
-{'col': 'B:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 1, 'cast': 'cell_as_int' }
+{'col': 'A:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 0, 'cast': 'cell_as_int'}
+{'col': 'B:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 1, 'cast': 'cell_as_int'}
 {'col': 'C:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 2}
 {'col': 'D:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 3}
 {'col': 'E:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 4}

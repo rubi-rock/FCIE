@@ -85,6 +85,10 @@ class ExcelGenerator(object):
         value = OUI_NON[cell_value]
         return value
 
+    @staticmethod
+    def call_as_percentage(cell_value):
+        return float(cell_value.strip('%')) / 100 if cell_value is not None else None
+
     def __build_document(self):
         template = self.get_template_name('document_template')
         with open(template, 'rt') as text_file:

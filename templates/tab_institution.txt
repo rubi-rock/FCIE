@@ -1,3 +1,16 @@
 {'name': 'Établissement', 'orientation': 'landscape', 'paper': 5, 'tab_color': '1072BA', 'margins': [0.5, 0.5, 1.5, 0.8], 'columns': {'width': [15, 15, 15, 15, 15, 15, 15, 15, 25]}, 'max_char': 225}
 {'header' : {'format': '&L&G&R&F', 'options': {'image_left': 'purkinje.png'}}}
 {'footer' : {'format': '&L&A&CPage &P / &N&R&D'}}
+
+
+{'cell': 'A1', 'style': 'section', 'value': 'Établissements'}
+{'row': 'A2', 'style': 'section', 'values': ['Numéro de pratique', 'Numéro de groupe', "Numéro d'établissement", "Nom d'établissement", 'Pourcentage', 'RMX (oui/non)', 'Secteurs Cabinet', 'Secteurs CLSC', 'Secteurs Centre hospitalier']}
+{'col': 'A3', 'style': 'cell', 'spare_rows': 5, 'loop': 'institution', 'index': 0, 'cast': 'cell_as_int'}
+{'col': 'B3', 'style': 'cell', 'spare_rows': 5, 'loop': 'institution', 'index': 1, 'cast': 'cell_as_int'}
+{'col': 'C3', 'style': 'cell', 'spare_rows': 5, 'loop': 'institution', 'index': 2, 'cast': 'cell_as_int'}
+{'col': 'D3', 'style': 'cell', 'spare_rows': 5, 'loop': 'institution', 'index': 3}
+{'col': 'E3', 'style': 'cell_percent', 'spare_rows': 5, 'loop': 'institution', 'index': 4, 'cast': 'call_as_percentage'}
+{'col': 'F3', 'style': 'cell', 'spare_rows': 5, 'loop': 'institution', 'index': 5, 'cast': 'cell_as_oui_non'}
+{'col': 'G3', 'style': 'cell', 'spare_rows': 5, 'loop': 'institution', 'index': 6, 'cast': 'cell_as_oui_non'}
+{'col': 'H3', 'style': 'cell', 'spare_rows': 5, 'loop': 'institution'}
+{'col': 'I3', 'style': 'cell', 'spare_rows': 5, 'loop': 'institution'}

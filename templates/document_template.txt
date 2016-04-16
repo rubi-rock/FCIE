@@ -6,7 +6,7 @@
 {'style': {'name' : 'text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11'}}}
 
 {'tab': 'tab_proposition'}
+{'tab': 'tab_debit'}
 {'tab': 'tab_config_base'}
 {'tab': 'tab_institution'}
 {'tab': 'tab_user_access'}
-{'tab': 'tab_debit'}
