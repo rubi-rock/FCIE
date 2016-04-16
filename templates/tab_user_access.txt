@@ -1,3 +1,8 @@
 {'name': 'Accès utilisateurs', 'orientation': 'portrait', 'paper': 1, 'tab_color': '1072BA', 'margins': [0.5, 0.5, 1.5, 0.8], 'columns': {'count': 2, 'width': 50}, 'max_char': 100}
 {'header' : {'format': '&L&G&R&F', 'options': {'image_left': 'purkinje.png'}}}
 {'footer' : {'format': '&L&A&CPage &P / &N&R&D'}}
+
+{'cell': 'A1', 'style': 'section', 'value': 'Accès utilisateurs'}
+{'row': 'A2', 'style': 'section', 'values': ['Nom d''utilisateur', 'Groupe']}
+{'col': 'A3', 'style': 'cell', 'spare_rows': 5, 'loop': 'user_access', 'index': 0}
+{'col': 'B3', 'style': 'cell', 'spare_rows': 5, 'loop': 'user_access', 'index': 1}
