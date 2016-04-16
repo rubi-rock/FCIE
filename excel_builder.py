@@ -24,16 +24,14 @@ class ExcelGenerator(object):
         self.__filename = filename.replace('csv', 'xlsx')
         self.__workbook = xlsxwriter.Workbook(self.__filename)
         self.__OS_list = '\n'.join(['[ ] ' + os for os in OS_LIST])
-
+        self.__variables = {}
         self.__formats = {}
         self.__build_document()
-
-#        self.__generate_proposition()
-#        self.__generate_config_base()
-#        self.__generate_institution()
-#        self.__generate_user_access()
-#        self.__generate_debit_form()
         self.__workbook.close()
+
+    @property
+    def variables(self):
+        return self.__variables
 
     @staticmethod
     def get_template_name(filename):
@@ -129,6 +127,8 @@ class ExcelGenerator(object):
                 worksheet.set_margins(value)
             elif name == 'tab_color':
                 worksheet.tab_color = value
+            elif name == 'hide_gridlines':
+                worksheet.hide_gridlines(value)
             elif name == 'columns':
                 if type(value['width']) is int:
                     cols = 'A:' + chr(ord('A') + value['count'])
@@ -158,7 +158,8 @@ class ExcelGenerator(object):
         ws_definition = { 'name': '',  'format': {'format': None, 'options': None}, 'content': [], 'header': {'format': None, 'options': None}, 'footer': {}}
         with open(self.get_template_name(filename), 'rt') as text_file:
             for line in iter(text_file):
-                if line.strip() == '':
+                line = line.strip()
+                if line == '' or line.startswith('#'):
                     continue
                 params = ast.literal_eval(line)
                 if 'name' in params.keys():
@@ -180,36 +181,63 @@ class ExcelGenerator(object):
 
         worksheet =  self.__instanciate_worksheet(ws_definition)
 
-        last_row, last_column = 0, 0
+        self.__variables.clear()
+        self.__variables['last_row'], self.__variables['last_column'] = 0, 0
         for item in ws_definition['content']:
             if 'cell' in item.keys():
-                lr, lc = self.__fill_cell(worksheet, item, last_row, last_column)
+                lr, lc = self.__fill_cell(worksheet, item)
             elif 'col' in item.keys():
-                lr, lc = self.__fill_col(worksheet, item, last_row, last_column)
+                lr, lc = self.__fill_col(worksheet, item)
             elif 'row' in item.keys():
-                lr, lc = self.__fill_row(worksheet, item, last_row, last_column)
+                lr, lc = self.__fill_row(worksheet, item)
+
             if 'remember_last_row' in item:
-                last_row = lr
+                self.__variables['last_row'] = lr + 1
             if 'remember_last_column' in item:
-                last_column = lc
+                self.__variables['last_column'] = lc + 1
 
         return worksheet
 
-    @staticmethod
-    def __substitute_last_coords(cell, last_row, last_column):
-        pieces = cell.split(':')
+    def __prepare_eval_expression(self, py_code):
+        if py_code is None or type(py_code) is not str :
+            return
+        for var_name in self.__variables.keys():
+            if var_name in py_code:
+                py_code = py_code.replace( var_name, 'self.variables["' + var_name + '"]')
+        return py_code
+
+    def __substitute_variables(self, cell_value):
+        if cell_value is None or type(cell_value) is not str :
+            return
+        for var_name in self.__variables.keys():
+            if var_name in cell_value:
+                cell_value = cell_value.replace(var_name, str(self.variables[var_name]))
+        return cell_value.replace('~', '')
+
+    def __substitute_last_coords(self, cell):
+        pieces = cell.split('~')
         if len(pieces) == 1:
             return cell
 
-        if 'last_column' == pieces[0]:
-            py_code = pieces[0]
-            pieces[0] = chr(ord('A') + eval(py_code))
+        coord_components = []
+        for piece in pieces:
+            if ':' not in piece:
+                coord_components.append(piece)
+            else:
+                for tmp in re.split('(^[^:]+)(:)([^:]+$)', piece):
+                    if len(tmp) > 0:
+                        coord_components.append(tmp)
 
-        if 'last_row' in pieces[1]:
-            py_code = pieces[1]
-            pieces[1] = str(eval(py_code))
+        for idx in range(len(coord_components)):
+            if 'last_column' in coord_components[idx]:
+                py_code = self.__prepare_eval_expression(coord_components[idx])
+                coord_components[idx] = chr(ord('A') + eval(py_code))
 
-        cell = pieces[0]  + pieces[1]
+            if 'last_row' in coord_components[idx]:
+                py_code = self.__prepare_eval_expression(coord_components[idx])
+                coord_components[idx] = str(eval(py_code))
+
+        cell = ''.join(coord_components)
         return cell
 
     @staticmethod
@@ -223,100 +251,126 @@ class ExcelGenerator(object):
                 return obj_method(value)
         return value
 
-    def __fill_cell(self, worksheet, item, last_row, last_column):
-        cell = item['cell']
-        cell = self.__substitute_last_coords(cell, last_row, last_column)
+    def write_value(self, worksheet, item, cell_value, format, row, col, row_offset, merge_to_row, merge_to_col):
+        cell = xl_rowcol_to_cell(row + row_offset, col)
+        self.__variables['current_row'] = row + row_offset + 1
+        cell_value = self.__substitute_variables(cell_value)
+
+        if merge_to_col is not None:
+            cell = cell + ':' + xl_rowcol_to_cell(merge_to_row + row_offset, merge_to_col)
+            worksheet.merge_range(cell, self.__get_casted_value(cell_value, item), format)
+        elif cell_value is not None and type(cell_value) is str and cell_value.strip().startswith('='):
+            worksheet.write_formula(cell, cell_value, format)
+        else:
+            worksheet.write(cell, self.__get_casted_value(cell_value, item), format)
+
+        if 'validation' in item.keys():
+            worksheet.data_validation(cell, item['validation'].copy())
+
+    def __get_format(self, item):
         style = item['style'] if 'style' in item else None
         if type(style) is str:
             format = self.__formats[style]
         else:
             format = self.__workbook.add_format(style)
+        return format
+
+    def __get_merged_cells_coords(self, col):
+        if ':' in col:
+            columns = col.split(':')
+            col = columns[0]
+            merge_to_row, merge_to_col = xl_cell_to_rowcol(columns[1])
+        else:
+            merge_to_row, merge_to_col = None, None
+        row, col = xl_cell_to_rowcol(col)
+        return col, row, col, merge_to_row, merge_to_col
+
+    def __fill_cell(self, worksheet, item):
+        cell = item['cell']
+        cell = self.__substitute_last_coords(cell)
+        cell, row, col, merge_to_row, merge_to_col = self.__get_merged_cells_coords(cell)
+        format = self.__get_format(item)
         value = item['value'] if 'value' in item else None
-        worksheet.write(cell, self.__get_casted_value(value, item), format)
-        row, col = xl_cell_to_rowcol(cell)
+
+        self.write_value(worksheet, item, value, format, row, col, 0, merge_to_row, merge_to_col)
         return row, col
 
-    def __fill_col(self, worksheet, item, last_row, last_column):
+    def __fill_col(self, worksheet, item):
         col = item['col']
-        col = self.__substitute_last_coords(col, last_row, last_column)
-        row, col = xl_cell_to_rowcol(col)
-        style = item['style'] if 'style' in item else None
-        if type(style) is str:
-            format = self.__formats[style]
+        col = self.__substitute_last_coords(cell)
+
+        #cell, row, col, merge_to_row, merge_to_col = self.__get_merged_cells_coords(cell)
+        if ':' in col:
+            columns = col.split(':')
+            col = columns[0]
+            merge_to_row, merge_to_col = xl_cell_to_rowcol(columns[1])
         else:
-            format = self.__workbook.add_format(style)
+            merge_to_row, merge_to_col = None, None
+        row, col = xl_cell_to_rowcol(col)
+
+        format = self.__get_format(item)
 
         if 'loop' in item.keys():
             value_list = self.__csv.values[item['loop']]
         else:
             value_list = None
 
-        row_offset = 0
+        row_offset = -1
         if value_list is not None:
             idx = item['index'] if 'index' in item.keys() else None
             if idx is None:
                 value = item['value'] if 'value' in item.keys() else None
             for csv_values in value_list:
-                cell = xl_rowcol_to_cell(row + row_offset, col)
-                if idx is not None:
-                    value = csv_values[idx]
-                worksheet.write(cell, self.__get_casted_value(value, item), format)
-                if 'validation' in item.keys():
-                    worksheet.data_validation(cell, item['validation'].copy())
                 row_offset += 1
+                value = csv_values[idx] if idx is not None else value
+                self.write_value(worksheet, item, value, format, row, col, row_offset, merge_to_row, merge_to_col)
         else:
             for value in item['values']:
-                cell = xl_rowcol_to_cell(row, col + row_offset)
-                worksheet.write(cell, self.__get_casted_value(value, item), format)
-                if 'validation' in item.keys():
-                    worksheet.data_validation(cell, item['validation'].copy())
                 row_offset += 1
+                self.write_value(worksheet, item, value, format, row, col, row_offset, merge_to_row, merge_to_col)
 
         if 'spare_rows' in item:
+            if 'copy_value_on_spare_row' in item and item['copy_value_on_spare_row']:
+                value = item['value'] if 'value' in item.keys() else None
+            else:
+                value = None
             for i in range(item['spare_rows']):
-                cell = xl_rowcol_to_cell(row + row_offset, col)
-                worksheet.write(cell, None, format)
-                if 'validation' in item.keys():
-                    worksheet.data_validation(cell, item['validation'].copy())
                 row_offset += 1
+                self.write_value(worksheet, item, value, format, row, col, row_offset, merge_to_row, merge_to_col)
 
         return row + row_offset, col
 
-    def __fill_row(self, worksheet, item, last_row, last_column):
+    def __fill_row(self, worksheet, item):
         row = item['row']
-        row = self.__substitute_last_coords(row, last_row, last_column)
+        row = self.__substitute_last_coords(row)
         row, col = xl_cell_to_rowcol(row)
-        style = item['style'] if 'style' in item else None
-        if type(style) is str:
-            format = self.__formats[style]
-        else:
-            format = self.__workbook.add_format(style)
+        format = self.__get_format(item)
 
         if 'loop' in item.keys():
             value_list = self.__csv.values[item['loop']]
         else:
             value_list = None
 
-        row_offset = 0
-        col_ofsset = 0
+        row_offset = -1
+        col_ofsset = -1
         if value_list is not None:
             for csv_values in value_list:
+                col_ofsset = -1
+                row_offset += 1
                 for idx in item['indexes']:
+                    col_ofsset += 1
                     cell = xl_rowcol_to_cell(row + row_offset, col + col_ofsset)
                     value = csv_values[idx] if idx is not None else None
                     worksheet.write(cell, self.__get_casted_value(value, item), format)
                     if 'validation' in item.keys():
                         worksheet.data_validation(cell, item['validation'].copy())
-                    col_ofsset += 1
-                row_offset += 1
-                col_ofsset = 0
         else:
             for value in item['values']:
+                col_ofsset += 1
                 cell = xl_rowcol_to_cell(row, col + col_ofsset)
                 worksheet.write(cell, self.__get_casted_value(value, item), format)
                 if 'validation' in item.keys():
                     worksheet.data_validation(cell, item['validation'].copy())
-                col_ofsset += 1
 
         return row + row_offset, col + col_ofsset
 

@@ -3,6 +3,6 @@
 {'footer' : {'format': '&L&A&CPage &P / &N&R&D'}}
 
 {'cell': 'A1', 'style': 'section', 'value': 'Accès utilisateurs'}
-{'row': 'A2', 'style': 'section', 'values': ['Nom d''utilisateur', 'Groupe']}
+{'row': 'A2', 'style': 'section', 'values': ["Nom d'utilisateur", 'Groupe']}
 {'col': 'A3', 'style': 'cell', 'spare_rows': 5, 'loop': 'user_access', 'index': 0}
 {'col': 'B3', 'style': 'cell', 'spare_rows': 5, 'loop': 'user_access', 'index': 1}

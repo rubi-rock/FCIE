@@ -1,21 +1,59 @@
-{'name': 'Proposition Financière', 'orientation': 'portrait', 'paper': 1, 'tab_color': '1072BA', 'margins': [0.5, 0.5, 1.5, 0.8], 'columns': {'width': [25, 25, 25, 25, 25, 25, 25, 25, 25]}, 'max_char': 225}
+{'name': 'Proposition Financière', 'orientation': 'landscape', 'paper': 5, 'tab_color': '1072BA', 'margins': [0.5, 0.5, 1.5, 0.8], 'hide_gridlines': 2, 'columns': {'width': [25, 25, 25, 25, 25, 25, 25, 25, 25]}, 'max_char': 225}
 {'header' : {'format': '&L&G&R&F', 'options': {'image_left': 'purkinje.png'}}}
-{'footer' : {'format': '&L&A&CPage &P / &N&R&D'}}
+{'footer' : {'format': '&L&"Times New Roman,Bold"NOTE : Les prix sont valables jusqu\'au 25 mai 2016.\n&L&A&CPage &P / &N&R&D'}}
 
-{'col': 'A1', 'style': 'section', 'values': ['Nom du client / Agence:', 'Attention', 'Rue', 'Ville', 'Code postal']}
-{'col': 'B1', 'style': 'cell', 'values': [None, None, None, None, None]}
+# Client
+{'cell': 'A1', 'style': 'section', 'value': 'Nom du client / Agence:'}
+{'cell': 'B1', 'style': 'section'}
+{'col': 'A2', 'style': 'cell', 'values': ['Attention', 'Rue', 'Ville', 'Code postal']}
+{'col': 'B2', 'style': 'cell', 'values': [None, None, None, None]}
 
-{'col': 'F1', 'style': 'section', 'values': ['Date:', 'Agent Purkinje:', 'Téléphone:', 'Fax:', 'Courriel:']}
-{'col': 'G1', 'style': 'cell', 'values': [None, None, None, None, None]}
+# Agent Purkinje
+{'cell': 'E1', 'style': 'section', 'value': 'Date:'}
+{'cell': 'F1', 'style': 'section', 'values': None}
+{'col': 'E2', 'style': 'cell', 'values': ['Agent Purkinje:', 'Téléphone:', 'Fax:', 'Courriel:']}
+{'col': 'F2', 'style': 'cell', 'values': [None, None, None, None]}
 
-{'row': 'A8', 'style': 'section', 'values': ['Numéro de pratique', 'Nom', 'Prénom', 'Spécialité', 'Qté', 'Mensualité', 'Mensualité\nTotale']}
-{'col': 'A9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 0, 'cast': 'cell_as_int'}
-{'col': 'B9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 1, 'cast': 'cell_as_int'}
-{'col': 'C9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 2}
-{'col': 'D9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 3}
-{'col': 'E9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 4, 'validation': {'validate': 'list', 'source': ['Oui', 'Non', ' ']}}
-{'col': 'F9', 'style': 'cell_dollard', 'spare_rows': 5, 'loop': 'md', 'value': 68}
-{'col': 'G9', 'style': 'cell', 'spare_rows': 5, 'loop': 'md'}
+# List des Médecins
+    # headers
+{'cell': 'A8:F8', 'style': 'colored_section', 'value': 'Identification du médecin'}
+{'row': 'A9', 'style': 'colored_header', 'values': ['Numéro de pratique', 'Nom', 'Prénom', 'Spécialité', None]}
+{'cell': 'D9:E9', 'style': 'colored_header', 'value': 'Spécialité'}
+{'cell': 'F9', 'style': 'colored_header', 'value': 'Mensualité'}
+    # MD list
+{'col': 'A10', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 0, 'cast': 'cell_as_int'}
+{'col': 'B10', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 2}
+{'col': 'C10', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 3}
+{'col': 'D10:E10', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 4, 'remember_last_row' : True}
+{'col': 'F10', 'style': 'cell_dollard', 'spare_rows': 5, 'loop': 'md', 'value': '=IF(ISBLANK(A~current_row), "", 68)', 'remember_last_row' : True, 'copy_value_on_spare_row': True}
+    # Total
+{'cell': 'E~last_row+1', 'style': 'header', 'value': 'Total'}
+{'cell': 'F~last_row+1', 'style': 'header_dollard', 'value': '=SUM(F10:F~last_row)'}
+
+# List des utilisateurs & frais de démarrage
+{'cell': 'A~last_row+3:C~last_row+3', 'style': 'colored_section', 'value': 'Utilisateurs'}
+{'cell': 'D~last_row+3:F~last_row+3', 'style': 'colored_section', 'value': 'FRAIS DE DÉMARRAGE'}
+    # sections
+{'row': 'A~last_row+4', 'style': 'colored_header', 'values': ['Nom', 'Type', 'Cout']}
+{'cell': 'A~last_row+5', 'style': 'cell', 'value': "No. d'utilisateurs"}
+{'cell': 'B~last_row+5', 'style': 'cell_dollard', 'value': 'Prix unitaire'}
+{'cell': 'C~last_row+5', 'style': 'cell', 'value': 'Coût'}
+    # Frais demarrage
+{'cell': 'D~last_row+4', 'style': 'colored_header', 'value': "No. d'utilisateurs"}
+{'cell': 'E~last_row+4', 'style': 'colored_header', 'value': 'Prix unitaire'}
+{'cell': 'F~last_row+4', 'style': 'colored_header', 'value': 'Coût'}
+{'cell': 'D~last_row+5', 'style': 'cell'}
+{'cell': 'E~last_row+5', 'style': 'cell_dollard', 'value': 225}
+{'cell': 'F~last_row+5', 'style': 'cell_dollard'}
+    # users
+{'row': 'A~last_row+4', 'style': 'section', 'values': ["Nom d'utilisateur", 'Type', 'Coût']}
+{'col': 'A~last_row+5', 'style': 'cell', 'spare_rows': 3, 'loop': 'user', 'index': 0}
+{'col': 'B~last_row+5', 'style': 'cell', 'spare_rows': 3, 'loop': 'user'}
+{'col': 'C~last_row+5', 'style': 'cell_dollard', 'spare_rows': 3, 'loop': 'user', 'value': 68, 'remember_last_row' : True}
+    # Total
+{'cell': 'A~last_row+1', 'style': 'header', 'value': 'Total'}
+{'cell': 'B~last_row+1', 'style': 'header_dollard'}
+{'cell': 'C~last_row+1', 'style': 'header_dollard'}
 
 
 
