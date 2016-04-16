@@ -2,14 +2,14 @@
 {'header' : {'format': '&L&G&R&F', 'options': {'image_left': 'purkinje.png'}}}
 {'footer' : {'format': '&L&A&CPage &P / &N&R&D'}}
 
-{'row': 'A1', 'style': 'section', 'values': ['Nom du client / Agence', 'Numéro d''agence', 'Mot de passe TIP-I', 'Ville']}
+{'row': 'A1', 'style': 'section', 'values': ['Nom du client / Agence', "Numéro d'agence", 'Mot de passe TIP-I', 'Ville']}
 {'col': 'A2', 'style': 'cell', 'spare_rows': 2, 'loop': 'customer'}
 {'col': 'B2', 'style': 'cell', 'spare_rows': 2, 'loop': 'customer', 'index': 0}
 {'col': 'C2', 'style': 'cell', 'spare_rows': 2, 'loop': 'customer', 'index': 0}
 {'col': 'D2', 'style': 'cell', 'spare_rows': 2, 'loop': 'customer', 'remember_last_row' : True}
 
 {'cell': 'A:last_row+3', 'style': 'section', 'value': 'Utilisateurs'}
-{'row': 'A:last_row+4', 'style': 'section', 'values': ['Nom d''utilisateur (Username)', 'Mot de passe', 'Nom', 'Prénom', 'System d''opération']}
+{'row': 'A:last_row+4', 'style': 'section', 'values': ["Nom d'utilisateur (Username)", 'Mot de passe', 'Nom', 'Prénom', "System d'opération"]}
 {'col': 'A:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'user'}
 {'col': 'B:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'index': 0}
 {'col': 'C:last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'index': 1}
