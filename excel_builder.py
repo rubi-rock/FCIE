@@ -208,7 +208,7 @@ class ExcelGenerator(object):
 
     def __substitute_variables(self, cell_value):
         if cell_value is None or type(cell_value) is not str :
-            return
+            return cell_value
         for var_name in self.__variables.keys():
             if var_name in cell_value:
                 cell_value = cell_value.replace(var_name, str(self.variables[var_name]))
@@ -251,9 +251,10 @@ class ExcelGenerator(object):
                 return obj_method(value)
         return value
 
-    def write_value(self, worksheet, item, cell_value, format, row, col, row_offset, merge_to_row, merge_to_col):
-        cell = xl_rowcol_to_cell(row + row_offset, col)
+    def write_value(self, worksheet, item, cell_value, format, row, col, row_offset, col_offset, merge_to_row, merge_to_col):
+        cell = xl_rowcol_to_cell(row + row_offset, col + col_offset)
         self.__variables['current_row'] = row + row_offset + 1
+        self.__variables['current_col'] = col + col_offset + 1
         cell_value = self.__substitute_variables(cell_value)
 
         if merge_to_col is not None:
@@ -285,6 +286,13 @@ class ExcelGenerator(object):
         row, col = xl_cell_to_rowcol(col)
         return col, row, col, merge_to_row, merge_to_col
 
+    def __save_variable(self, item):
+        if not 'save' in item.keys():
+            return
+        var = item['save'].split('=', 1)
+        py_code = self.__prepare_eval_expression(var[1])
+        self.variables[var[0]] = eval(py_code)
+
     def __fill_cell(self, worksheet, item):
         cell = item['cell']
         cell = self.__substitute_last_coords(cell)
@@ -292,28 +300,25 @@ class ExcelGenerator(object):
         format = self.__get_format(item)
         value = item['value'] if 'value' in item else None
 
-        self.write_value(worksheet, item, value, format, row, col, 0, merge_to_row, merge_to_col)
+        self.__save_variable(item)
+
+        self.write_value(worksheet, item, value, format, row, col, 0, 0, merge_to_row, merge_to_col)
         return row, col
 
     def __fill_col(self, worksheet, item):
-        col = item['col']
-        col = self.__substitute_last_coords(cell)
+        def write_col_value(row_offset):
+            row_offset += 1
+            self.write_value(worksheet, item, value, format, row, col, row_offset, 0, merge_to_row, merge_to_col)
+            if row_offset == 0:
+                self.__save_variable(item)
+            return row_offset
 
-        #cell, row, col, merge_to_row, merge_to_col = self.__get_merged_cells_coords(cell)
-        if ':' in col:
-            columns = col.split(':')
-            col = columns[0]
-            merge_to_row, merge_to_col = xl_cell_to_rowcol(columns[1])
-        else:
-            merge_to_row, merge_to_col = None, None
-        row, col = xl_cell_to_rowcol(col)
-
+        cell = item['col']
+        cell = self.__substitute_last_coords(cell)
+        cell, row, col, merge_to_row, merge_to_col = self.__get_merged_cells_coords(cell)
         format = self.__get_format(item)
 
-        if 'loop' in item.keys():
-            value_list = self.__csv.values[item['loop']]
-        else:
-            value_list = None
+        value_list = self.__csv.values[item['loop']] if 'loop' in item.keys() else None
 
         row_offset = -1
         if value_list is not None:
@@ -321,13 +326,11 @@ class ExcelGenerator(object):
             if idx is None:
                 value = item['value'] if 'value' in item.keys() else None
             for csv_values in value_list:
-                row_offset += 1
                 value = csv_values[idx] if idx is not None else value
-                self.write_value(worksheet, item, value, format, row, col, row_offset, merge_to_row, merge_to_col)
+                row_offset = write_col_value(row_offset)
         else:
             for value in item['values']:
-                row_offset += 1
-                self.write_value(worksheet, item, value, format, row, col, row_offset, merge_to_row, merge_to_col)
+                row_offset = write_col_value(row_offset)
 
         if 'spare_rows' in item:
             if 'copy_value_on_spare_row' in item and item['copy_value_on_spare_row']:
@@ -335,44 +338,39 @@ class ExcelGenerator(object):
             else:
                 value = None
             for i in range(item['spare_rows']):
-                row_offset += 1
-                self.write_value(worksheet, item, value, format, row, col, row_offset, merge_to_row, merge_to_col)
+                row_offset = write_col_value(row_offset)
 
         return row + row_offset, col
 
     def __fill_row(self, worksheet, item):
-        row = item['row']
-        row = self.__substitute_last_coords(row)
-        row, col = xl_cell_to_rowcol(row)
+        def write_row_value():
+            self.write_value(worksheet, item, value, format, row, col, row_offset if row_offset >= 0 else 0, col_offset if col_offset >= -1 else 0, merge_to_row, merge_to_col)
+            if row_offset == 0 or col_offset == 0:
+                self.__save_variable(item)
+
+        cell = item['row']
+        cell = self.__substitute_last_coords(cell)
+        cell, row, col, merge_to_row, merge_to_col = self.__get_merged_cells_coords(cell)
         format = self.__get_format(item)
 
-        if 'loop' in item.keys():
-            value_list = self.__csv.values[item['loop']]
-        else:
-            value_list = None
+        value_list = self.__csv.values[item['loop']] if 'loop' in item.keys() else None
 
         row_offset = -1
-        col_ofsset = -1
+        col_offset = -1
         if value_list is not None:
             for csv_values in value_list:
-                col_ofsset = -1
+                col_offset = -1
                 row_offset += 1
                 for idx in item['indexes']:
-                    col_ofsset += 1
-                    cell = xl_rowcol_to_cell(row + row_offset, col + col_ofsset)
+                    col_offset += 1
                     value = csv_values[idx] if idx is not None else None
-                    worksheet.write(cell, self.__get_casted_value(value, item), format)
-                    if 'validation' in item.keys():
-                        worksheet.data_validation(cell, item['validation'].copy())
+                    write_row_value()
         else:
             for value in item['values']:
-                col_ofsset += 1
-                cell = xl_rowcol_to_cell(row, col + col_ofsset)
-                worksheet.write(cell, self.__get_casted_value(value, item), format)
-                if 'validation' in item.keys():
-                    worksheet.data_validation(cell, item['validation'].copy())
+                col_offset += 1
+                write_row_value()
 
-        return row + row_offset, col + col_ofsset
+        return row + row_offset, col + col_offset
 
     def __add_text_lines(self, worksheet, row, col, col_count, lines, format = None):
         if format is None:

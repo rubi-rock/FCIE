@@ -1,5 +1,5 @@
-{'style': {'name' : 'section', 'properties': {'border': 2, 'bold': True, 'font_name': 'Times New Roman', 'valign': 'vcenter'}}}
-{'style': {'name' : 'colored_section', 'properties': {'border': 2, 'bold': True, 'font_name': 'Times New Roman', 'bg_color': 'D4DFEE', 'valign': 'vcenter'}}}
+{'style': {'name' : 'section', 'properties': {'border': 2, 'bold': True, 'font_name': 'Times New Roman', 'align': 'center', 'valign': 'vcenter'}}}
+{'style': {'name' : 'colored_section', 'properties': {'border': 2, 'bold': True, 'font_name': 'Times New Roman', 'bg_color': 'D4DFEE', 'align': 'center', 'valign': 'vcenter'}}}
 {'style': {'name' : 'header', 'properties': {'border': 2, 'bold': False, 'font_name': 'Times New Roman'}}}
 {'style': {'name' : 'header_dollard', 'properties': {'border': 2, 'bold': False, 'font_name': 'Times New Roman', 'num_format': '$0.00'}}}
 {'style': {'name' : 'colored_header', 'properties': {'border': 2, 'bold': False, 'font_name': 'Times New Roman', 'bg_color': 'D4DFEE'}}}
@@ -7,6 +7,8 @@
 {'style': {'name' : 'cell_percent', 'properties': {'valign': 'top', 'num_format': '0.0%', 'text_wrap': True, 'border': 1}}}
 {'style': {'name' : 'cell_dollard', 'properties': {'valign': 'top', 'num_format': '$0.00', 'text_wrap': True, 'border': 1}}}
 {'style': {'name' : 'text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11'}}}
+{'style': {'name' : 'underlined_text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'underline': True}}}
+{'style': {'name' : 'bold_text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'bold': True}}}
 
 {'tab': 'tab_proposition'}
 {'tab': 'tab_debit'}

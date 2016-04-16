@@ -1,4 +1,4 @@
-{'name': 'Proposition Financière', 'orientation': 'landscape', 'paper': 5, 'tab_color': '1072BA', 'margins': [0.5, 0.5, 1.5, 0.8], 'hide_gridlines': 2, 'columns': {'width': [25, 25, 25, 25, 25, 25, 25, 25, 25]}, 'max_char': 225}
+{'name': 'Proposition Financière', 'orientation': 'landscape', 'paper': 1, 'tab_color': '1072BA', 'margins': [0.5, 0.5, 1.5, 0.8], 'hide_gridlines': 2, 'columns': {'width': [25, 15, 15, 15, 15, 15, 15, 15, 15]}}
 {'header' : {'format': '&L&G&R&F', 'options': {'image_left': 'purkinje.png'}}}
 {'footer' : {'format': '&L&"Times New Roman,Bold"NOTE : Les prix sont valables jusqu\'au 25 mai 2016.\n&L&A&CPage &P / &N&R&D'}}
 
@@ -12,49 +12,57 @@
 {'cell': 'E1', 'style': 'section', 'value': 'Date:'}
 {'cell': 'F1', 'style': 'section', 'values': None}
 {'col': 'E2', 'style': 'cell', 'values': ['Agent Purkinje:', 'Téléphone:', 'Fax:', 'Courriel:']}
-{'col': 'F2', 'style': 'cell', 'values': [None, None, None, None]}
+{'col': 'F2', 'style': 'cell', 'values': [None, None, None, None], 'remember_last_row' : True}
+
+# Text
+{'cell': 'A~last_row+3:F~last_row+2', 'style': 'underlined_text', 'value': 'OBJET: Proposition de mise à jour de la Solution de facturation Purkinje'}
+{'cell': 'A~last_row+5:F~last_row+5', 'style': 'text', 'value': "FRAIS D'UTILISATION", 'remember_last_row' : True}
 
 # List des Médecins
-    # headers
-{'cell': 'A8:F8', 'style': 'colored_section', 'value': 'Identification du médecin'}
-{'row': 'A9', 'style': 'colored_header', 'values': ['Numéro de pratique', 'Nom', 'Prénom', 'Spécialité', None]}
-{'cell': 'D9:E9', 'style': 'colored_header', 'value': 'Spécialité'}
-{'cell': 'F9', 'style': 'colored_header', 'value': 'Mensualité'}
-    # MD list
-{'col': 'A10', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 0, 'cast': 'cell_as_int'}
-{'col': 'B10', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 2}
-{'col': 'C10', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 3}
-{'col': 'D10:E10', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 4, 'remember_last_row' : True}
-{'col': 'F10', 'style': 'cell_dollard', 'spare_rows': 5, 'loop': 'md', 'value': '=IF(ISBLANK(A~current_row), "", 68)', 'remember_last_row' : True, 'copy_value_on_spare_row': True}
-    # Total
+    # MD - headers
+{'cell': 'A~last_row+1:F~last_row+1', 'style': 'colored_section', 'value': 'Identification du médecin'}
+{'row': 'A~last_row+2', 'style': 'colored_header', 'values': ['Numéro de pratique', 'Nom', 'Prénom', 'Spécialité', None]}
+{'cell': 'D~last_row+2:E~last_row+2', 'style': 'colored_header', 'value': 'Spécialité'}
+{'cell': 'F~last_row+2', 'style': 'colored_header', 'value': 'Mensualité', 'remember_last_row' : True}
+    # MD - list
+{'col': 'A~last_row+1', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 0, 'cast': 'cell_as_int', 'save': 'md_first_row=current_row'}
+{'col': 'B~last_row+1', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 2}
+{'col': 'C~last_row+1', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 3}
+{'col': 'D~last_row+1:E~last_row+1', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 4}
+{'col': 'F~last_row+1', 'style': 'cell_dollard', 'spare_rows': 5, 'loop': 'md', 'value': '=IF(ISBLANK(A~current_row), "", 68)', 'remember_last_row' : True, 'copy_value_on_spare_row': True}
+    # MD - Total
 {'cell': 'E~last_row+1', 'style': 'header', 'value': 'Total'}
-{'cell': 'F~last_row+1', 'style': 'header_dollard', 'value': '=SUM(F10:F~last_row)'}
+{'cell': 'F~last_row+1', 'style': 'header_dollard', 'value': '=SUM(F~md_first_row:F~last_row)'}
 
 # List des utilisateurs & frais de démarrage
 {'cell': 'A~last_row+3:C~last_row+3', 'style': 'colored_section', 'value': 'Utilisateurs'}
 {'cell': 'D~last_row+3:F~last_row+3', 'style': 'colored_section', 'value': 'FRAIS DE DÉMARRAGE'}
-    # sections
-{'row': 'A~last_row+4', 'style': 'colored_header', 'values': ['Nom', 'Type', 'Cout']}
-{'cell': 'A~last_row+5', 'style': 'cell', 'value': "No. d'utilisateurs"}
-{'cell': 'B~last_row+5', 'style': 'cell_dollard', 'value': 'Prix unitaire'}
-{'cell': 'C~last_row+5', 'style': 'cell', 'value': 'Coût'}
-    # Frais demarrage
-{'cell': 'D~last_row+4', 'style': 'colored_header', 'value': "No. d'utilisateurs"}
-{'cell': 'E~last_row+4', 'style': 'colored_header', 'value': 'Prix unitaire'}
-{'cell': 'F~last_row+4', 'style': 'colored_header', 'value': 'Coût'}
+    # Frais demarrage - header
+{'row': 'D~last_row+4', 'style': 'colored_header', 'values': ["No. d'utilisateurs", 'Prix unitaire', 'Coût']}
 {'cell': 'D~last_row+5', 'style': 'cell'}
 {'cell': 'E~last_row+5', 'style': 'cell_dollard', 'value': 225}
-{'cell': 'F~last_row+5', 'style': 'cell_dollard'}
+{'cell': 'F~last_row+5', 'style': 'cell_dollard', 'value': '=D~current_row*E~current_row'}
+    # Frais demarrage - Total
+{'cell': 'E~last_row+6', 'style': 'header', 'value': 'Total'}
+{'cell': 'F~last_row+6', 'style': 'header_dollard', 'value': '=SUM(E~current_row:E~last_row)'}
     # users
 {'row': 'A~last_row+4', 'style': 'section', 'values': ["Nom d'utilisateur", 'Type', 'Coût']}
-{'col': 'A~last_row+5', 'style': 'cell', 'spare_rows': 3, 'loop': 'user', 'index': 0}
-{'col': 'B~last_row+5', 'style': 'cell', 'spare_rows': 3, 'loop': 'user'}
-{'col': 'C~last_row+5', 'style': 'cell_dollard', 'spare_rows': 3, 'loop': 'user', 'value': 68, 'remember_last_row' : True}
-    # Total
+{'col': 'A~last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'index': 0, 'save': 'user_first_row=current_row'}
+{'col': 'B~last_row+5', 'style': 'cell', 'spare_rows': 5, 'loop': 'user'}
+{'col': 'C~last_row+5', 'style': 'cell_dollard', 'spare_rows': 5, 'loop': 'user', 'value': 68, 'remember_last_row' : True}
+    # users - Total
 {'cell': 'A~last_row+1', 'style': 'header', 'value': 'Total'}
-{'cell': 'B~last_row+1', 'style': 'header_dollard'}
-{'cell': 'C~last_row+1', 'style': 'header_dollard'}
+{'cell': 'B~last_row+1', 'style': 'header_dollard', 'value': '=SUM(B~user_first_row:B~last_row)'}
+{'cell': 'C~last_row+1', 'style': 'header_dollard', 'value': '=SUM(C~user_first_row:C~last_row)', 'remember_last_row' : True}
 
+# Text
+{'cell': 'A~last_row+2:F~last_row+3', 'style': 'text', 'value': "Le prix sus-mentionnés inclut les frais d'utilisation et de soutien de la nouvelle solution de facturation infonuagique Purkinje \"version SYRA\" ainsi que le soutien de la version précédente durant une période de 3 ans."}
+{'cell': 'A~last_row+5:F~last_row+7', 'style': 'text', 'value': "Le paiement des frais mensuels se fera par prélèvements bancaires préautorisés. À cette fin, le client doit remplir le formulaire \"Programme de débits préautorisés d’entreprise\" inclus dans ce document."}
+{'cell': 'A~last_row+9:F~last_row+10', 'style': 'text', 'value': "Je soussigné accepte la présente qui sera considérée comme l'entente contractuelle avec Purkinje Inc. , une date d'installation sera confirmée dans les plus brefs délais."}
+{'cell': 'A~last_row+12:F~last_row+13', 'style': 'text', 'value': "J'accepte aussi de signer un renouvellement de contrat pour l'utilisation et le soutien de la solution de facturation Purkinje d'un terme de trois (3) ans."}
+{'cell': 'A~last_row+15:F~last_row+15', 'style': 'text', 'value': "Nom du client : _______________________________________________"}
+{'cell': 'A~last_row+19:F~last_row+19', 'style': 'text', 'value': "Signature     : _______________________________________________"}
+{'cell': 'A~last_row+21:F~last_row+21', 'style': 'text', 'value': "Date          : _________________________"}
 
 
 
