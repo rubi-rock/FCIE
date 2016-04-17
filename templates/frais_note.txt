@@ -1,2 +1,0 @@
-%%{'columns': {'count': 7, 'width': 30}, 'max_char': 100}%%
-NOTE : Les prix sont valables quinze (15) jours suivant la date de la présente.
