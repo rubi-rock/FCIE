@@ -106,6 +106,8 @@ class ExcelGenerator(object):
                         i += 1
             elif name == 'tab_color':
                 worksheet.column_width = value
+            elif name == 'page_view' and value:
+                worksheet.set_page_view()
 
     def __instanciate_worksheet(self, ws_definition):
         try:
@@ -123,7 +125,6 @@ class ExcelGenerator(object):
     def __add_page_break(self, worksheet, item):
         row = self.__substitute_variables(item['break'])
         self.__variables['breaks'].append(row)
-        worksheet.set_h_pagebreaks(self.__variables['breaks'])
 
     def __build_worksheet(self, filename):
         ws_definition = { 'name': '',  'format': {'format': None, 'options': None}, 'content': [], 'header': {'format': None, 'options': None}, 'footer': {}}
@@ -158,7 +159,7 @@ class ExcelGenerator(object):
                 elif 'hspace' in params.keys():
                     ws_definition['content'].append(params)
 
-        self.__process_ws_definition(ws_definition)
+        return self.__process_ws_definition(ws_definition)
 
     def __process_ws_definition(self, ws_definition):
         try:
@@ -186,6 +187,9 @@ class ExcelGenerator(object):
                     self.__variables['last_row'] = lr + 1
                 if 'remember_last_column' in item:
                     self.__variables['last_column'] = lc + 1
+
+            if 'breaks' in self.__variables:
+                worksheet.set_h_pagebreaks(self.__variables['breaks'])
 
             return worksheet
         except:
