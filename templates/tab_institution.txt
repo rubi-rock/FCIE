@@ -1,10 +1,10 @@
-{'name': 'Ã‰tablissement', 'orientation': 'landscape', 'paper': 5, 'tab_color': '1072BA', 'margins': [0.5, 0.5, 1.5, 0.8], 'columns': {'width': [15, 15, 15, 15, 15, 15, 15, 15, 25]}, 'max_char': 225}
-{'header' : {'format': '&L&G&R&F', 'options': {'image_left': 'purkinje.png'}}}
-{'footer' : {'format': '&L&A&CPage &P / &N&R&D'}}
+{'name': 'Établissement', 'orientation': 'landscape', 'paper': 5, 'tab_color': '1072BA', 'margins': [0.5, 0.5, 1.5, 0.8], 'columns': {'width': [15, 15, 15, 15, 15, 15, 15, 15, 25]}, 'max_char': 225}
+{'header' : {'format': '&L&G&c&D - &A&R&F', 'options': {'image_left': 'images/purkinje.png'}}}
+{'footer' : {'format': '&L&10&"Times New Roman,Bold"NOTE : Les prix sont valables jusqu\'au 25 mai 2016.\n&R&10&"Times New Roman,"Page &P / &N\n&C&G', 'options': {'image_center': 'images/footer.png'}}}
 
 
-{'cell': 'A1', 'style': 'section', 'value': 'Ã‰tablissements'}
-{'row': 'A2', 'style': 'section', 'values': ['NumÃ©ro de pratique', 'NumÃ©ro de groupe', "NumÃ©ro d'Ã©tablissement", "Nom d'Ã©tablissement", 'Pourcentage', 'RMX (oui/non)', 'Secteurs Cabinet', 'Secteurs CLSC', 'Secteurs Centre hospitalier']}
+{'cell': 'A1:I1', 'style': 'section', 'value': 'Établissements'}
+{'row': 'A2', 'style': 'section', 'values': ['Numéro de pratique', 'Numéro de groupe', "Numéro d'établissement", "Nom d'établissement", 'Pourcentage', 'RMX (oui/non)', 'Secteurs Cabinet', 'Secteurs CLSC', 'Secteurs Centre hospitalier']}
 {'col': 'A3', 'style': 'cell', 'spare_rows': 5, 'loop': 'institution', 'index': 0, 'cast': 'cell_as_int'}
 {'col': 'B3', 'style': 'cell', 'spare_rows': 5, 'loop': 'institution', 'index': 1, 'cast': 'cell_as_int'}
 {'col': 'C3', 'style': 'cell', 'spare_rows': 5, 'loop': 'institution', 'index': 2, 'cast': 'cell_as_int'}

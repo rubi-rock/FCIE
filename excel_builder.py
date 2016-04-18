@@ -53,9 +53,15 @@ class ExcelGenerator(object):
 
     def __build_document(self):
         template = self.get_template_name('document_template')
-        with open(template, 'rt') as text_file:
+        with open(template, 'rt', newline="\n") as text_file:
             for line in iter(text_file):
-                if line.strip() == '':
+                line = line.strip()
+                if line == '' or line.startswith('#'):
+                    continue
+                try:
+                    params = ast.literal_eval(line)
+                except:
+                    logging.exception('Unable to parse line: ' + line)
                     continue
                 params = ast.literal_eval(line)
                 if 'style' in params.keys():
@@ -72,7 +78,7 @@ class ExcelGenerator(object):
         worksheet = self.__workbook.add_worksheet(name)
         worksheet.set_landscape()
         worksheet.set_paper(5)
-        worksheet.set_margins(0.5, 0.5, 1.5, 0.8)
+        #worksheet.set_margins(0.5, 0.5, 1.5, 0.8)
         worksheet.set_header('&L&G&R&F', {'image_left': 'purkinje.png'})
         worksheet.set_footer('&L&A&CPage &P / &N&R&D')
         return worksheet
@@ -88,7 +94,7 @@ class ExcelGenerator(object):
             elif name == 'paper':
                 worksheet.set_paper(int(value))
             elif name == 'margins':
-                worksheet.set_margins(value)
+                worksheet.set_margins(value[0], value[1], value[2], value[3])
             elif name == 'tab_color':
                 worksheet.tab_color = value
             elif name == 'hide_gridlines':
@@ -113,11 +119,12 @@ class ExcelGenerator(object):
         try:
             worksheet = self.__workbook.add_worksheet(ws_definition['name'])
             self.__reformat_worksheet(worksheet, ws_definition['format'])
-            worksheet.set_margins(0.5, 0.5, 1.5, 0.8)
-            if ws_definition['header'] is not None and ws_definition['header']['format'] is not None:
-                worksheet.set_header(ws_definition['header']['format'], ws_definition['header']['options'])
-            if ws_definition['footer'] is not None and ws_definition['footer']['format'] is not None:
-                worksheet.set_footer(ws_definition['footer']['format'], ws_definition['footer']['options'] if 'option' in ws_definition['footer'].keys() else None)
+            if 'header' in ws_definition.keys() and ws_definition['header'] is not None:
+                if 'format' in ws_definition['header'].keys() and ws_definition['header']['format'] is not None:
+                    worksheet.set_header(ws_definition['header']['format'], ws_definition['header']['options'] if 'options' in ws_definition['header'].keys() else None)
+            if 'footer' in ws_definition.keys() and ws_definition['footer'] is not None:
+                if 'format' in ws_definition['footer'].keys() and ws_definition['footer']['format'] is not None:
+                    worksheet.set_footer(ws_definition['footer']['format'], ws_definition['footer']['options'] if 'options' in ws_definition['footer'].keys() else None)
             return worksheet
         except:
             logging.exception('failed to create tab: ' + ws_definition['name'])
@@ -128,12 +135,16 @@ class ExcelGenerator(object):
 
     def __build_worksheet(self, filename):
         ws_definition = { 'name': '',  'format': {'format': None, 'options': None}, 'content': [], 'header': {'format': None, 'options': None}, 'footer': {}}
-        with open(self.get_template_name(filename), 'rt') as text_file:
+        with open(self.get_template_name(filename), 'rt', newline="\n") as text_file:
             for line in iter(text_file):
                 line = line.strip()
                 if line == '' or line.startswith('#'):
                     continue
-                params = ast.literal_eval(line)
+                try:
+                    params = ast.literal_eval(line)
+                except:
+                    logging.exception('Unable to parse line: ' + line)
+                    continue
                 if 'name' in params.keys():
                     ws_definition['name'] = params['name']
                     params.pop('name')
@@ -168,25 +179,28 @@ class ExcelGenerator(object):
             self.__variables['breaks'] = []
             self.__variables['last_row'], self.__variables['last_column'] = 0, 0
             for item in ws_definition['content']:
-                if 'cell' in item.keys():
-                    lr, lc = self.__fill_cell(worksheet, item)
-                elif 'col' in item.keys():
-                    lr, lc = self.__fill_col(worksheet, item)
-                elif 'row' in item.keys():
-                    lr, lc = self.__fill_row(worksheet, item)
-                elif 'table' in item.keys():
-                    self.__add_table(worksheet, item)
-                elif 'break' in item.keys():
-                    self.__add_page_break(worksheet, item)
-                elif 'vspace' in item.keys():
-                    self.__variables['last_row'] = self.__variables['last_row'] + item['vspace']
-                elif 'hspace' in item.keys():
-                    self.__variables['last_column'] = self.__variables['last_column'] + item['hspace']
+                try:
+                    if 'cell' in item.keys():
+                        lr, lc = self.__fill_cell(worksheet, item)
+                    elif 'col' in item.keys():
+                        lr, lc = self.__fill_col(worksheet, item)
+                    elif 'row' in item.keys():
+                        lr, lc = self.__fill_row(worksheet, item)
+                    elif 'table' in item.keys():
+                        self.__add_table(worksheet, item)
+                    elif 'break' in item.keys():
+                        self.__add_page_break(worksheet, item)
+                    elif 'vspace' in item.keys():
+                        self.__variables['last_row'] = self.__variables['last_row'] + item['vspace']
+                    elif 'hspace' in item.keys():
+                        self.__variables['last_column'] = self.__variables['last_column'] + item['hspace']
 
-                if 'remember_last_row' in item:
-                    self.__variables['last_row'] = lr + 1
-                if 'remember_last_column' in item:
-                    self.__variables['last_column'] = lc + 1
+                    if 'remember_last_row' in item:
+                        self.__variables['last_row'] = lr + 1
+                    if 'remember_last_column' in item:
+                        self.__variables['last_column'] = lc + 1
+                except:
+                    logging.exception('Unable to process property: ' + str(item))
 
             if 'breaks' in self.__variables:
                 worksheet.set_h_pagebreaks(self.__variables['breaks'])
@@ -313,7 +327,12 @@ class ExcelGenerator(object):
         cell = self.__substitute_last_coords(cell)
         cell, row, col, merge_to_row, merge_to_col = self.__get_merged_cells_coords(cell)
         format = self.__get_format(item)
-        value = item['value'] if 'value' in item else None
+        value = item['value'] if 'value' in item.keys() else None
+        if 'data' in item.keys() and 'index' in item.keys():
+            data = item['data']
+            index = item['index']
+            if data in self.__csv.values.keys():
+                value = self.__csv.values[data][0][index]
 
         self.__save_variable(item)
         self.write_value(worksheet, item, value, format, row, col, 0, 0, merge_to_row, merge_to_col)

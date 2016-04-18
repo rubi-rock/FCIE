@@ -1,29 +1,37 @@
-{'name': 'Proposition FinanciÃ¨re', 'orientation': 'landscape', 'paper': 1, 'tab_color': '1072BA', 'page_view': True, 'margins': [0.4, 0.4, 1.3, 0.4], 'hide_gridlines': 2, 'columns': {'width': [25, 15, 15, 25, 10, 25]}}
-{'header' : {'format': '&L&G&R&F', 'options': {'image_left': 'purkinje.png'}}}
-{'footer' : {'format': '&L&"Times New Roman,Bold"NOTE : Les prix sont valables jusqu\'au 25 mai 2016.\n&L&A&CPage &P / &N&R&D'}}
+{'name': 'Proposition Financière', 'orientation': 'landscape', 'paper': 1, 'tab_color': '1072BA', 'margins': [0.4, 0.4, 1.3, 0.8], 'page_view': True, 'hide_gridlines': 2, 'columns': {'width': [25, 15, 15, 25, 15, 25]}}
+{'header' : {'format': '&L&G&c&D - &A&R&F', 'options': {'image_left': 'images/purkinje.png'}}}
+{'footer' : {'format': '&L&10&"Times New Roman,Bold"NOTE : Les prix sont valables jusqu\'au 25 mai 2016.\n&R&10&"Times New Roman,"Page &P / &N\n&C&G', 'options': {'image_center': 'images/footer.png'}}}
 
 # Client
 {'cell': 'A1', 'style': 'section', 'value': 'Nom du client / Agence:'}
-{'cell': 'B1', 'style': 'section'}
-{'col': 'A2', 'style': 'cell', 'values': ['Attention', 'Rue', 'Ville', 'Code postal']}
-{'col': 'B2', 'style': 'cell', 'values': [None, None, None, None]}
+{'cell': 'B1:C1', 'style': 'section', 'data': 'site', 'index': 0}
+{'col': 'A2', 'style': 'cell', 'values': ["Numéro d'agence", 'Mot de passe TIP-I', 'Attention', 'Rue', 'Ville', 'Code postal']}
+{'cell': 'B2:C2', 'style': 'cell'}
+{'cell': 'B3:C3', 'style': 'cell', 'data': 'customer', 'index': 0}
+{'cell': 'B4:C4', 'style': 'cell', 'data': 'customer', 'index': 1}
+{'cell': 'B5:C5', 'style': 'cell', 'data': 'site', 'index': 1}
+{'cell': 'B6:C6', 'style': 'cell', 'data': 'site', 'index': 2}
+{'cell': 'B7:C7', 'style': 'cell', 'data': 'site', 'index': 3}
 
 # Agent Purkinje
 {'cell': 'E1', 'style': 'section', 'value': 'Date:'}
-{'cell': 'F1', 'style': 'section', 'values': None}
-{'col': 'E2', 'style': 'cell', 'values': ['Agent Purkinje:', 'TÃ©lÃ©phone:', 'Fax:', 'Courriel:']}
-{'col': 'F2', 'style': 'cell', 'values': [None, None, None, None], 'remember_last_row' : True}
+{'cell': 'F1', 'style': 'section', 'value': '=TODAY()'}
+{'col': 'E2', 'style': 'cell', 'values': ['Représentant Purkinje:', None, 'Téléphone:', 'Fax:', 'Courriel:']}
+{'cell': 'E2:E3', 'style': 'cell', 'value': 'Représentant Purkinje:'}
+{'col': 'F2', 'style': 'cell', 'values': ['', None, '514.355.0888', '514.355.0481', 'support@purkinje.com']}
+{'cell': 'F2:F3', 'style': 'cell'}
+{'cell': 'F7', 'remember_last_row' : True}
 
 # Text
-{'cell': 'A~last_row+3:F~last_row+2', 'style': 'underlined_text', 'value': 'OBJET: Proposition de mise Ã  jour de la Solution de facturation Purkinje'}
+{'cell': 'A~last_row+3:F~last_row+2', 'style': 'underlined_text', 'value': 'OBJET: Proposition de mise à jour de la Solution de facturation Purkinje'}
 {'cell': 'A~last_row+5:F~last_row+4', 'style': 'text', 'value': "FRAIS D'UTILISATION", 'remember_last_row' : True}
 
-# List des MÃ©decins
+# List des Médecins
     # MD - headers
-{'cell': 'A~last_row+1:F~last_row+1', 'style': 'colored_section', 'value': 'Identification du mÃ©decin'}
-{'row': 'A~last_row+2', 'style': 'colored_header', 'values': ['NumÃ©ro de pratique', 'Nom', 'PrÃ©nom', 'SpÃ©cialitÃ©', None]}
-{'cell': 'D~last_row+2:E~last_row+2', 'style': 'colored_header', 'value': 'SpÃ©cialitÃ©'}
-{'cell': 'F~last_row+2', 'style': 'colored_header', 'value': 'MensualitÃ©', 'remember_last_row' : True}
+{'cell': 'A~last_row+1:F~last_row+1', 'style': 'colored_section', 'value': 'Identification du médecin'}
+{'row': 'A~last_row+2', 'style': 'colored_header', 'values': ['Numéro de pratique', 'Nom', 'Prénom', 'Spécialité', None]}
+{'cell': 'D~last_row+2:E~last_row+2', 'style': 'colored_header', 'value': 'Spécialité'}
+{'cell': 'F~last_row+2', 'style': 'colored_header', 'value': 'Mensualité', 'remember_last_row' : True}
     # MD - list
 {'col': 'A~last_row+1', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 0, 'cast': 'cell_as_int', 'save': 'md_first_row=current_row'}
 {'col': 'B~last_row+1', 'style': 'cell', 'spare_rows': 5, 'loop': 'md', 'index': 2}
@@ -37,12 +45,12 @@
 # Page Break
 {'break': 'last_row'}
 
-# List des utilisateurs & frais de dÃ©marrage
+# List des utilisateurs & frais de démarrage
 {'vspace': 1}
 {'cell': 'A~last_row+1:C~last_row+1', 'style': 'colored_section', 'value': 'UTILISATEURS'}
-{'cell': 'D~last_row+1:F~last_row+1', 'style': 'colored_section', 'value': 'FRAIS DE DÃ‰MARRAGE', 'remember_last_row' : True}
+{'cell': 'D~last_row+1:F~last_row+1', 'style': 'colored_section', 'value': 'FRAIS DE DÉMARRAGE', 'remember_last_row' : True}
     # Frais demarrage - header
-{'row': 'D~last_row+1', 'style': 'colored_header', 'values': ["No. d'utilisateurs", 'Prix unitaire', 'CoÃ»t']}
+{'row': 'D~last_row+1', 'style': 'colored_header', 'values': ["No. d'utilisateurs", 'Prix unitaire', 'Coût']}
 {'cell': 'D~last_row+2', 'style': 'cell'}
 {'cell': 'E~last_row+2', 'style': 'cell_dollard', 'value': 225}
 {'cell': 'F~last_row+2', 'style': 'cell_dollard', 'value': '=D~current_row*E~current_row'}
@@ -50,7 +58,7 @@
 {'cell': 'E~last_row+3', 'style': 'grid_header', 'value': 'Total'}
 {'cell': 'F~last_row+3', 'style': 'header_dollard', 'value': '=SUM(E~current_row:E~last_row)'}
     # users
-{'row': 'A~last_row+1', 'style': 'section', 'values': ["Nom d'utilisateur", 'Type', 'CoÃ»t']}
+{'row': 'A~last_row+1', 'style': 'section', 'values': ["Nom d'utilisateur", 'Type', 'Coût']}
 {'col': 'A~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'index': 0, 'save': 'user_first_row=current_row'}
 {'col': 'B~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user'}
 {'col': 'C~last_row+2', 'style': 'cell_dollard', 'spare_rows': 5, 'loop': 'user', 'value': 68, 'remember_last_row' : True}
@@ -64,9 +72,9 @@
 
 # Text
 {'vspace': 0}
-{'cell': 'A~last_row+2:F~last_row+3', 'style': 'text', 'value': "Le prix sus-mentionnÃ©s inclut les frais d'utilisation et de soutien de la nouvelle solution de facturation infonuagique Purkinje \"version SYRA\" ainsi que le soutien de la version prÃ©cÃ©dente durant une pÃ©riode de 3 ans."}
-{'cell': 'A~last_row+5:F~last_row+6', 'style': 'text', 'value': "Le paiement des frais mensuels se fera par prÃ©lÃ¨vements bancaires prÃ©autorisÃ©s. Ã€ cette fin, le client doit remplir le formulaire \"Programme de dÃ©bits prÃ©autorisÃ©s dâ€™entreprise\" inclus dans ce document."}
-{'cell': 'A~last_row+9:F~last_row+9', 'style': 'text', 'value': "Je soussignÃ© accepte la prÃ©sente qui sera considÃ©rÃ©e comme l'entente contractuelle avec Purkinje Inc. , une date d'installation sera confirmÃ©e dans les plus brefs dÃ©lais."}
+{'cell': 'A~last_row+2:F~last_row+3', 'style': 'text', 'value': "Le prix sus-mentionnés inclut les frais d'utilisation et de soutien de la nouvelle solution de facturation infonuagique Purkinje \"version SYRA\" ainsi que le soutien de la version précédente durant une période de 3 ans."}
+{'cell': 'A~last_row+5:F~last_row+6', 'style': 'text', 'value': "Le paiement des frais mensuels se fera par prélèvements bancaires préautorisés. À cette fin, le client doit remplir le formulaire \"Programme de débits préautorisés d'entreprise\" inclus dans ce document."}
+{'cell': 'A~last_row+9:F~last_row+9', 'style': 'text', 'value': "Je soussigné accepte la présente qui sera considérée comme l'entente contractuelle avec Purkinje Inc. , une date d'installation sera confirmée dans les plus brefs délais."}
 {'cell': 'A~last_row+11:F~last_row+12', 'style': 'text', 'value': "J'accepte aussi de signer un renouvellement de contrat pour l'utilisation et le soutien de la solution de facturation Purkinje d'un terme de trois (3) ans."}
 {'cell': 'A~last_row+14', 'style': 'text', 'value': "Nom du client :"}
 {'cell': 'B~last_row+14:F~last_row+14', 'style': 'text', 'value': "_______________________________________________"}
@@ -80,15 +88,15 @@
 
 {'vspace': -1}
 {'cell': 'A~last_row+2:F~last_row+2', 'style': 'title', 'value': "ACCORD DE DPA DU PAYEUR"}
-{'cell': 'A~last_row+3:F~last_row+3', 'style': 'title1', 'value': "Programme de dÃ©bits prÃ©autorisÃ©s dâ€™entreprise*"}
-{'cell': 'A~last_row+4:F~last_row+4', 'style': 'title1', 'value': "Autorisation de dÃ©bits directs dâ€™un compte du payeur, en faveur du bÃ©nÃ©ficiaire"}
+{'cell': 'A~last_row+3:F~last_row+3', 'style': 'title1', 'value': "Programme de débits préautorisés d'entreprise*"}
+{'cell': 'A~last_row+4:F~last_row+4', 'style': 'title1', 'value': "Autorisation de débits directs d'un compte du payeur, en faveur du bénéficiaire"}
 {'vspace': 5}
 {'cell': 'A~last_row+1:F~last_row+1', 'style': 'underlined_text', 'value': "INSTRUCTIONS :"}
-{'cell': 'B~last_row+2:F~last_row+2', 'style': 'text', 'value': "1. Veuillez remplir toutes les sections et signer Ã  la section 1"}
-{'cell': 'B~last_row+3:F~last_row+3', 'style': 'text', 'value': "2. Retournez le formulaire rempli, accompagnÃ© dâ€™un chÃ¨que portant la mention Â«NULÂ», Ã  :"}
-{'cell': 'B~last_row+4:F~last_row+4', 'style': 'text', 'value': "       Purkinje inc. 614 rue St-Jacques, bureau 200, MontrÃ©al, QuÃ©bec, H3C 1E2"}
-{'cell': 'B~last_row+5:F~last_row+5', 'style': 'text', 'value': "3. Nâ€™hÃ©sitez pas Ã  vous adresser au bÃ©nÃ©ficiaire si vous avez des questions."}
-{'cell': 'B~last_row+6:F~last_row+6', 'style': 'bold_text', 'value': "4. Veuillez taper ou inscrire lisiblement en caractÃ¨res dâ€™imprimerie.", 'remember_last_row' : True}
+{'cell': 'B~last_row+2:F~last_row+2', 'style': 'text', 'value': "1. Veuillez remplir toutes les sections et signer à la section 1"}
+{'cell': 'B~last_row+3:F~last_row+3', 'style': 'text', 'value': "2. Retournez le formulaire rempli, accompagné d'un chèque portant la mention «NUL», à :"}
+{'cell': 'B~last_row+4:F~last_row+4', 'style': 'text', 'value': "       Purkinje inc. 614 rue St-Jacques, bureau 200, Montréal, Québec, H3C 1E2"}
+{'cell': 'B~last_row+5:F~last_row+5', 'style': 'text', 'value': "3. N'hésitez pas à vous adresser au bénéficiaire si vous avez des questions."}
+{'cell': 'B~last_row+6:F~last_row+6', 'style': 'bold_text', 'value': "4. Veuillez taper ou inscrire lisiblement en caractères d'imprimerie.", 'remember_last_row' : True}
 {'vspace': 1}
 # Renseignement client
 {'cell': 'A~last_row+1:C~last_row+1', 'style': 'header1', 'value': "RENSEIGNEMENTS SUR LE CLIENT"}
@@ -98,7 +106,7 @@
 {'cell': 'B~last_row+3', 'textbox': {'width': 195, 'height': 26, 'line': {'color': 'black'}, 'y_offset': 5}}
 {'cell': 'A~last_row+4:C~last_row+4', 'style': 'text_vcentered', 'value': "Adresse :", 'height': 26}
 {'cell': 'B~last_row+4', 'textbox': {'width': 195, 'height': 26, 'line': {'color': 'black'}, 'y_offset': 5}}
-{'cell': 'A~last_row+5:C~last_row+5', 'style': 'text_vcentered', 'value': "NumÃ©ro de tÃ©lÃ©phone :", 'height': 26}
+{'cell': 'A~last_row+5:C~last_row+5', 'style': 'text_vcentered', 'value': "Numéro de téléphone :", 'height': 26}
 {'cell': 'B~last_row+5', 'textbox': {'width': 195, 'height': 26, 'line': {'color': 'black'}, 'y_offset': 5}}
 {'cell': 'A~last_row+6:C~last_row+8', 'style': 'text_vcentered', 'value': "Signature du payeur :", 'height': 26}
 {'cell': 'B~last_row+6', 'textbox': {'width': 195, 'height': 64, 'line': {'color': 'black'}, 'y_offset': 5}}
@@ -108,17 +116,17 @@
 {'cell': 'A~last_row+10:C~last_row+10', 'style': 'header1', 'value': "RENSEIGNEMENTS SUR LES PAIEMENTS"}
 {'cell': 'A~last_row+11:C~last_row+11', 'style': 'text_vcentered', 'value': "Montant :", 'save': 'paiment_row=current_row', 'height': 26}
 {'cell': 'B~last_row+11', 'textbox': {'width': 195, 'height': 26, 'line': {'color': 'black'}, 'y_offset': 5}}
-{'cell': 'A~last_row+12:C~last_row+12', 'style': 'text_vcentered', 'value': "FrÃ©quence", 'height': 26}
+{'cell': 'A~last_row+12:C~last_row+12', 'style': 'text_vcentered', 'value': "Fréquence", 'height': 26}
 {'cell': 'B~last_row+12', 'value': 'Mensuelle', 'textbox': {'width': 195, 'height': 26, 'line': {'color': 'black'}, 'y_offset': 5}}
 # Etablissement financier
-{'cell': 'D~last_row+1:F~last_row+1', 'style': 'header1', 'value': "Ã‰TABLISSEMENT FINANCIER ET RENSEIGNEMENTS BANCAIRES DU CLIENT", 'height': 30}
-{'cell': 'D~last_row+3:F~last_row+3', 'style': 'text_vcentered', 'value': "NumÃ©ro de succursale (5 caractÃ¨res) :", 'save': 'zone_row=current_row', 'height': 26}
+{'cell': 'D~last_row+1:F~last_row+1', 'style': 'header1', 'value': "ÉTABLISSEMENT FINANCIER ET RENSEIGNEMENTS BANCAIRES DU CLIENT", 'height': 30}
+{'cell': 'D~last_row+3:F~last_row+3', 'style': 'text_vcentered', 'value': "Numéro de succursale (5 caractères) :", 'save': 'zone_row=current_row', 'height': 26}
 {'cell': 'E~last_row+3', 'textbox': {'width': 195, 'height': 26, 'line': {'color': 'black'}, 'x_offset': 55, 'y_offset': 5}}
-{'cell': 'D~last_row+4:F~last_row+4', 'style': 'text_vcentered', 'value': "N. dâ€™Ã©tablissement (3 caractÃ¨res)", 'height': 26}
+{'cell': 'D~last_row+4:F~last_row+4', 'style': 'text_vcentered', 'value': "N. d'établissement (3 caractères)", 'height': 26}
 {'cell': 'E~last_row+4', 'textbox': {'width': 195, 'height': 26, 'line': {'color': 'black'}, 'x_offset': 55, 'y_offset': 5}}
-{'cell': 'D~last_row+5:F~last_row+5', 'style': 'text_vcentered', 'value': "NumÃ©ro de compte :", 'height': 26}
+{'cell': 'D~last_row+5:F~last_row+5', 'style': 'text_vcentered', 'value': "Numéro de compte :", 'height': 26}
 {'cell': 'E~last_row+5', 'textbox': {'width': 195, 'height': 26, 'line': {'color': 'black'}, 'x_offset': 55, 'y_offset': 5}}
-{'cell': 'D~last_row+6:F~last_row+8', 'style': 'text_vcentered', 'value': "DÃ©nomination de lâ€™Ã©tablissement\nfinancier :", 'height': 26}
+{'cell': 'D~last_row+6:F~last_row+8', 'style': 'text_vcentered', 'value': "Dénomination de l'établissement\nfinancier :", 'height': 26}
 {'cell': 'E~last_row+6', 'textbox': {'width': 195, 'height': 64, 'line': {'color': 'black'}, 'x_offset': 55, 'y_offset': 5}}
 {'cell': 'D~last_row+9:F~last_row+9', 'style': 'text_vcentered', 'value': "Succursale :", 'height': 26}
 {'cell': 'E~last_row+9', 'textbox': {'width': 195, 'height': 26, 'line': {'color': 'black'}, 'x_offset': 55, 'y_offset': 5}}

@@ -1,0 +1,101 @@
+===Site===
+Nom,Adresse,Ville,"Code Postal",Province,Pays,Telephone,Fax
+"Clinique Purkinje Demo","614 St-Jaques, Suite 200",Montréal,"H3C 1E2",QC,Canada,514-355-0888,514-355-0481
+===Proposition===
+Numero,Nom,Prenom,Specialite
+195076,COTE,GUILDO,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+183408,MASSICOTTE,GUY,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+196071,CAMBRON,HELENE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+104143,"DE BROUWER",MARIE-CLAUDE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+182332,MORISSETTE,JACQUELINE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+196339,ROY,JOHANNE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+185227,LAVOIE,BERNADETTE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+107069,SOUCY,MARIEKE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+107094,CARON,CATHERINE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+175308,BRIAND,CLAUDE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+179295,LANDRY,LINDA,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+109149,RIOUX,CAROLINE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+109296,PEDNEAULT,JANIE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+109502,BANET,JOAN,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+110475,DIONNE,MIREILLE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+113304,ASSELIN,MELISSA,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+110087,BOIVIN,FREDERIC,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+114413,OUELLET,MARIE-EVE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+114106,MESSIER,VALERIE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+176360,LEMIEUX,GHISLAIN,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
+===customer===
+"Numero agence","Mot de passe TIP-I"
+61434,AGP6143A
+===user===
+Utilisateur,"Mot de passe",Nom,Prenom
+1792951,1792951,LANDRY,LINDA
+MORGEN01,morgen01,Moreau,Genevieve
+1091495,1091495,RIOUX,CAROLINE
+GAGSAN01,gagsan01,GAGNON,SANDRA
+1092964,1092964,PEDNEAULT,JANIE
+BELJUL01,beljul01,BELANGER,JULIE
+LAHALE01,lahale01,"LA HAYE",ALEXANDRA
+PLOKAR01,plokar01,PLOURDE,KARINE
+MORGENPK,morgenpk,Moreau,Genevi?ve
+PURKINJEMA,purkinjema,Ares,Martin
+PURKINJEKH,purkinjekh,Hould,Kevin
+HOUKEV01,houkev01,Hould,Kevin
+LAVCAR01,lavcar01,Lavoie,Caroline
+===md===
+"Numero pratique","Numero groupe",Nom,Prenom,Specialite,RMX
+179295,11085,LANDRY,LINDA,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine",F
+109149,16068,RIOUX,CAROLINE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine",F
+109296,16170,PEDNEAULT,JANIE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine",F
+176360,11085,LEMIEUX,GHISLAIN,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine",F
+===institution===
+"Numero pratique","Numero groupe","Numero etablissement","Nom etablissement",Pourcentage,RMX,Cabinet
+,,01233,01233,100%,F,F
+179295,11085,80515,"Clinique Medicale de Squatec",125%,T,F
+179295,11085,03331,"Clinique Externe CH Notre-Dame",140%,F,F
+179295,11085,03333,"Hospitalisation CH Notre-Dame",140%,F,F
+179295,11085,03336,"Soins intensifs CH Notre-Dame",140%,F,F
+179295,11085,11565,"CHSLD Foyer Beaus?jour",140%,F,F
+179295,11085,54192,"Clinique Medicale Linda Landry",125%,F,T
+179295,11085,93402,"CLSC de Cabano",125%,F,F
+179295,11085,03337,"Urgence CH Notre-Dame",140%,F,F
+109149,16068,93402,"CLSC de Cabano",125%,F,F
+109296,16170,03337,"Urgence CH Notre-Dame",135%,F,F
+109296,16170,54192,"Clinique Medicale Linda Landry",125%,F,T
+109296,16170,03333,"Hospitalisation CH Notre-Dame",135%,F,F
+109296,16170,03331,"Clinique Externe CH Notre-Dame",135%,F,F
+109149,16068,03333,"Hospitalisation CH Notre-Dame",135%,F,F
+109149,16068,54192,"Clinique Medicale Linda Landry",125%,F,T
+109149,16068,03331,"Clinique Externe CH Notre-Dame",135%,F,F
+109149,16068,95502,"Hopital GMF",125%,F,F
+109296,16170,95502,"Hopital GMF",125%,F,F
+109149,16068,03336,"Soins intensifs CH Notre-Dame",135%,F,F
+179295,11085,95502,"Hopital GMF",125%,F,F
+109149,16068,03337,"Urgence CH Notre-Dame",135%,F,F
+109296,16170,03336,"Soins intensifs CH Notre-Dame",135%,F,F
+109296,16170,93402,"CLSC de Cabano",125%,F,F
+179295,11085,11135,"Villa de la Rivi?re",140%,F,F
+109296,16170,11135,"Villa de la Rivi?re",135%,F,F
+179295,11085,54192,"Clin.M?dicale Linda Landry (Dom)",125%,F,T
+109296,16170,54192,"Clin.M?dicale Linda Landry (Dom)",125%,F,T
+109296,16170,11565,"CHSLD Foyer Beaus?jour",135%,F,F
+109149,16068,54192,"Clin.M?dicale Linda Landry (Dom)",125%,F,T
+109149,16068,11135,"Villa de la Rivi?re",135%,F,F
+109149,16068,11565,"CHSLD Foyer Beaus?jour",135%,F,F
+179295,11085,80515,"Clinique Medicale de Squatec",125%,T,T
+176360,11085,54455,"Clinique M?dicale Lac-des-Aigles",125%,F,T
+176360,11085,54455,"Clinique Lac-des-Aigles (DOM)",125%,F,T
+===user_access===
+Utilisateur,GroupeA
+1091495,X
+1092964,X
+1792951,X
+BELJUL01,X
+GAGSAN01,X
+HOUKEV01,X
+LAHALE01,X
+LAVCAR01,X
+MORGEN01,X
+MORGENPK,X
+PLOKAR01,X
+PURKINJEKH,X
+PURKINJEMA,X

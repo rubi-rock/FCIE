@@ -1,8 +1,8 @@
-{'name': 'AccÃ¨s utilisateurs', 'orientation': 'portrait', 'paper': 1, 'tab_color': '1072BA', 'margins': [0.5, 0.5, 1.5, 0.8], 'columns': {'count': 2, 'width': 50}, 'max_char': 100}
-{'header' : {'format': '&L&G&R&F', 'options': {'image_left': 'purkinje.png'}}}
-{'footer' : {'format': '&L&A&CPage &P / &N&R&D'}}
+{'name': 'Accès utilisateurs', 'orientation': 'portrait', 'paper': 1, 'tab_color': '1072BA', 'margins': [0.5, 0.5, 1.5, 0.8], 'columns': {'count': 2, 'width': 50}, 'max_char': 100}
+{'header' : {'format': '&L&G&c&D - &A&R&F', 'options': {'image_left': 'images/purkinje.png'}}}
+{'footer' : {'format': '&L&10&"Times New Roman,Bold"NOTE : Les prix sont valables jusqu\'au 25 mai 2016.\n&R&10&"Times New Roman,"Page &P / &N\n&C&G', 'options': {'image_center': 'images/footer.png'}}}
 
-{'cell': 'A1', 'style': 'section', 'value': 'AccÃ¨s utilisateurs'}
+{'cell': 'A1:B1', 'style': 'section', 'value': 'Accès utilisateurs'}
 {'row': 'A2', 'style': 'section', 'values': ["Nom d'utilisateur", 'Groupe']}
 {'col': 'A3', 'style': 'cell', 'spare_rows': 5, 'loop': 'user_access', 'index': 0}
 {'col': 'B3', 'style': 'cell', 'spare_rows': 5, 'loop': 'user_access', 'index': 1}
