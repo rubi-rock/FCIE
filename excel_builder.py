@@ -63,7 +63,7 @@ class ExcelGenerator(object):
                 except:
                     logging.exception('Unable to parse line: ' + line)
                     continue
-                params = ast.literal_eval(line)
+
                 if 'style' in params.keys():
                     self.__add_format(params['style'])
                 elif 'tab' in params.keys():
@@ -73,15 +73,6 @@ class ExcelGenerator(object):
         name = style['name']
         properties = style['properties']
         self.__formats[name] = self.__workbook.add_format(properties)
-
-    def __create_worksheet(self, name):
-        worksheet = self.__workbook.add_worksheet(name)
-        worksheet.set_landscape()
-        worksheet.set_paper(5)
-        #worksheet.set_margins(0.5, 0.5, 1.5, 0.8)
-        worksheet.set_header('&L&G&R&F', {'image_left': 'purkinje.png'})
-        worksheet.set_footer('&L&A&CPage &P / &N&R&D')
-        return worksheet
 
     @staticmethod
     def __reformat_worksheet(worksheet, ws_format):
@@ -180,6 +171,7 @@ class ExcelGenerator(object):
             self.__variables['last_row'], self.__variables['last_column'] = 0, 0
             for item in ws_definition['content']:
                 try:
+                    lc,lr  = None, None
                     if 'cell' in item.keys():
                         lr, lc = self.__fill_cell(worksheet, item)
                     elif 'col' in item.keys():
@@ -195,9 +187,9 @@ class ExcelGenerator(object):
                     elif 'hspace' in item.keys():
                         self.__variables['last_column'] = self.__variables['last_column'] + item['hspace']
 
-                    if 'remember_last_row' in item:
+                    if 'remember_last_row' in item and lr is not None:
                         self.__variables['last_row'] = lr + 1
-                    if 'remember_last_column' in item:
+                    if 'remember_last_column' in item and lc is not None:
                         self.__variables['last_column'] = lc + 1
                 except:
                     logging.exception('Unable to process property: ' + str(item))
@@ -302,7 +294,7 @@ class ExcelGenerator(object):
                 format = self.__workbook.add_format(style)
             return format
         except:
-            logging.exception('Unable to find style: ' + style)
+            logging.exception('Unable to find style: ' + str(style))
             return None
 
     def __get_merged_cells_coords(self, col):

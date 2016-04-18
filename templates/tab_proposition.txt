@@ -57,7 +57,7 @@
 #{'cell': 'E~last_row+3', 'style': 'grid_header', 'value': 'Total'}
 #{'cell': 'F~last_row+3', 'style': 'header_dollard', 'value': '=SUM(E~current_row:E~last_row)'}
     # users
-{'row': 'A~last_row+1', 'style': 'section', 'values': ["Nom d'utilisateur", 'Courriel', 'Mot de pass', Spécialité, 'RMX', 'Coût']}
+{'row': 'A~last_row+1', 'style': 'section', 'values': ["Nom d'utilisateur", 'Courriel', 'Mot de passe', 'Spécialité', 'RMX', 'Coût']}
 {'col': 'A~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'index': 0, 'save': 'user_first_row=current_row'}
 {'col': 'B~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user'}
 {'col': 'C~last_row+2', 'style': 'cell_dollard', 'spare_rows': 5, 'loop': 'user', 'value': 68, 'remember_last_row' : True}
