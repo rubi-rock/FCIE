@@ -120,12 +120,12 @@ class ExcelGenerator(object):
         except:
             logging.exception('failed to create tab: ' + ws_definition['name'])
 
-    def __add_page_break(self, worksheet, item):
+    def __add_page_break(self, item):
         row = self.__substitute_variables(item['break'])
         self.__variables['breaks'].append(row)
 
     def __build_worksheet(self, filename):
-        ws_definition = { 'name': '',  'format': {'format': None, 'options': None}, 'content': [], 'header': {'format': None, 'options': None}, 'footer': {}}
+        ws_definition = {'name': '',  'format': {'format': None, 'options': None}, 'content': [], 'header': {'format': None, 'options': None}, 'footer': {}}
         with open(self.get_template_name(filename), 'rt', newline="\n") as text_file:
             for line in iter(text_file):
                 line = line.strip()
@@ -165,13 +165,13 @@ class ExcelGenerator(object):
 
     def __process_ws_definition(self, ws_definition):
         try:
-            worksheet =  self.__instanciate_worksheet(ws_definition)
+            worksheet = self.__instanciate_worksheet(ws_definition)
             self.__variables.clear()
             self.__variables['breaks'] = []
             self.__variables['last_row'], self.__variables['last_column'] = 0, 0
             for item in ws_definition['content']:
                 try:
-                    lc,lr  = None, None
+                    lc,lr = None, None
                     if 'cell' in item.keys():
                         lr, lc = self.__fill_cell(worksheet, item)
                     elif 'col' in item.keys():
@@ -181,7 +181,7 @@ class ExcelGenerator(object):
                     elif 'table' in item.keys():
                         self.__add_table(worksheet, item)
                     elif 'break' in item.keys():
-                        self.__add_page_break(worksheet, item)
+                        self.__add_page_break(item)
                     elif 'vspace' in item.keys():
                         self.__variables['last_row'] = self.__variables['last_row'] + item['vspace']
                     elif 'hspace' in item.keys():
@@ -207,15 +207,15 @@ class ExcelGenerator(object):
         worksheet.add_table(coords, {'header_row': False, 'autofilter': False, 'banded_rows': False, 'banded_columns': False, 'first_column': False, 'last_column': False})
 
     def __prepare_eval_expression(self, py_code):
-        if py_code is None or type(py_code) is not str :
+        if py_code is None or type(py_code) is not str:
             return
         for var_name in self.__variables.keys():
             if var_name in py_code:
-                py_code = py_code.replace( var_name, 'self.variables["' + var_name + '"]')
+                py_code = py_code.replace(var_name, 'self.variables["' + var_name + '"]')
         return py_code
 
     def __substitute_variables(self, cell_value):
-        if cell_value is None or type(cell_value) is not str :
+        if cell_value is None or type(cell_value) is not str:
             return cell_value
         for var_name in self.__variables.keys():
             if var_name in cell_value:
@@ -283,6 +283,7 @@ class ExcelGenerator(object):
             worksheet.data_validation(cell, item['validation'].copy())
 
     def __get_format(self, item):
+        style = None
         try:
             style = item['style'] if 'style' in item else None
             if style is None:
@@ -297,7 +298,8 @@ class ExcelGenerator(object):
             logging.exception('Unable to find style: ' + str(style))
             return None
 
-    def __get_merged_cells_coords(self, col):
+    @staticmethod
+    def __get_merged_cells_coords(col):
         if ':' in col:
             columns = col.split(':')
             col = columns[0]
@@ -308,7 +310,7 @@ class ExcelGenerator(object):
         return col, row, col, merge_to_row, merge_to_col
 
     def __save_variable(self, item):
-        if not 'save' in item.keys():
+        if 'save' not in item.keys():
             return
         var = item['save'].split('=', 1)
         py_code = self.__prepare_eval_expression(var[1])
@@ -347,6 +349,7 @@ class ExcelGenerator(object):
 
         row_offset = -1
         if value_list is not None:
+            value = None
             idx = item['index'] if 'index' in item.keys() else None
             if idx is None:
                 value = item['value'] if 'value' in item.keys() else None
@@ -424,7 +427,6 @@ class ExcelGenerator(object):
 
     def __process_line_formatting(self, line, default_format):
         height = None
-        pieces = ast.literal_eval(line)
         fmt_line = re.compile('^\s*(\{.+\})\s*(.+)$')
         pieces = fmt_line.split(line)
         if pieces is not None and len(pieces) == 4:
