@@ -1,4 +1,5 @@
 {'style': {'name' : 'section', 'properties': {'border': 2, 'bold': True, 'text_wrap': True, 'font_name': 'Times New Roman', 'align': 'center', 'valign': 'vcenter'}}}
+{'style': {'name' : 'section_date', 'properties': {'border': 2, 'bold': True, 'text_wrap': True, 'font_name': 'Times New Roman', 'align': 'center', 'valign': 'vcenter', 'num_format': 'yyyy/mm/dd'}}}
 {'style': {'name' : 'colored_section', 'properties': {'border': 2, 'bold': True, 'text_wrap': True, 'font_name': 'Times New Roman', 'bg_color': 'D4DFEE', 'align': 'center', 'valign': 'vcenter'}}}
 {'style': {'name' : 'grid_header', 'properties': {'border': 2, 'bold': False, 'text_wrap': True, 'font_name': 'Times New Roman'}}}
 {'style': {'name' : 'header_dollard', 'properties': {'border': 2, 'text_wrap': True, 'font_name': 'Times New Roman', 'num_format': '$0.00'}}}
@@ -6,6 +7,7 @@
 {'style': {'name' : 'cell', 'properties': {'valign': 'top', 'text_wrap': True, 'border': 1}}}
 {'style': {'name' : 'cell_percent', 'properties': {'valign': 'top', 'num_format': '0.0%', 'text_wrap': True, 'border': 1}}}
 {'style': {'name' : 'cell_dollard', 'properties': {'valign': 'top', 'num_format': '$0.00', 'text_wrap': True, 'border': 1}}}
+{'style': {'name' : 'input', 'properties': {'valign': 'top', 'text_wrap': True, 'bottom': 1}}}
 {'style': {'name' : 'text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11'}}}
 {'style': {'name' : 'text_vcentered', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'valign': 'vcenter'}}}
 {'style': {'name' : 'underlined_text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'underline': True}}}
@@ -17,6 +19,6 @@
 {'style': {'name' : 'header1', 'properties': {'border': 0, 'bold': True, 'text_wrap': True, 'font_name': 'Times New Roman', 'font_size': 14, 'align': 'left', 'valign': 'top'}}}
 
 {'tab': 'tab_proposition'}
-{'tab': 'tab_config_base'}
-{'tab': 'tab_institution'}
-{'tab': 'tab_user_access'}
+#{'tab': 'tab_config_base'}
+#{'tab': 'tab_institution'}
+#{'tab': 'tab_user_access'}

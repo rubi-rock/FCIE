@@ -126,7 +126,7 @@ class ExcelGenerator(object):
 
     def __build_worksheet(self, filename):
         ws_definition = {'name': '',  'format': {'format': None, 'options': None}, 'content': [], 'header': {'format': None, 'options': None}, 'footer': {}}
-        with open(self.get_template_name(filename), 'rt', newline="\n") as text_file:
+        with open(self.get_template_name(filename), 'rt', encoding='iso-8859-1', newline="\n") as text_file:
             for line in iter(text_file):
                 line = line.strip()
                 if line == '' or line.startswith('#'):
@@ -317,20 +317,24 @@ class ExcelGenerator(object):
         self.variables[var[0]] = eval(py_code)
 
     def __fill_cell(self, worksheet, item):
-        cell = item['cell']
-        cell = self.__substitute_last_coords(cell)
-        cell, row, col, merge_to_row, merge_to_col = self.__get_merged_cells_coords(cell)
-        format = self.__get_format(item)
-        value = item['value'] if 'value' in item.keys() else None
-        if 'data' in item.keys() and 'index' in item.keys():
-            data = item['data']
-            index = item['index']
-            if data in self.__csv.values.keys():
-                value = self.__csv.values[data][0][index]
+        try:
+            cell = item['cell']
+            cell = self.__substitute_last_coords(cell)
+            cell, row, col, merge_to_row, merge_to_col = self.__get_merged_cells_coords(cell)
+            format = self.__get_format(item)
+            value = item['value'] if 'value' in item.keys() else None
+            #if 'data' in item.keys() and 'index' in item.keys():
+            if 'data' in item.keys():
+                data = item['data'].lower()
+                if self.__csv.has_key(data):
+                    value = self.__csv.get_value(data)
 
-        self.__save_variable(item)
-        self.write_value(worksheet, item, value, format, row, col, 0, 0, merge_to_row, merge_to_col)
-        return row, col
+            self.__save_variable(item)
+            self.write_value(worksheet, item, value, format, row, col, 0, 0, merge_to_row, merge_to_col)
+            return row, col
+        except:
+            logging.info('Unable to parse line: ' + str(item))
+            raise
 
     def __fill_col(self, worksheet, item):
         def write_col_value(row_offset):
@@ -345,20 +349,22 @@ class ExcelGenerator(object):
         cell, row, col, merge_to_row, merge_to_col = self.__get_merged_cells_coords(cell)
         format = self.__get_format(item)
 
-        value_list = self.__csv.values[item['loop']] if 'loop' in item.keys() else None
-
         row_offset = -1
-        if value_list is not None:
-            value = None
-            idx = item['index'] if 'index' in item.keys() else None
-            if idx is None:
-                value = item['value'] if 'value' in item.keys() else None
-            for csv_values in value_list:
-                value = csv_values[idx] if idx is not None else value
-                row_offset = write_col_value(row_offset)
+        if 'loop' in item.keys():
+            value_list = self.__csv.get_column(item['loop'])
+            # just 1 field
+            if value_list is not None and type(value_list) is list:
+                for value in value_list:
+                    row_offset = write_col_value(row_offset)
+            elif 'value' in item.keys():
+                value = item['value']
+                i = self.__csv.get_list_length(item['loop'])
+                for idx in range(i):
+                    row_offset = write_col_value(row_offset)
         else:
-            for value in item['values']:
-                row_offset = write_col_value(row_offset)
+            if 'values' in item.keys():
+                for value in item['values']:
+                    row_offset = write_col_value(row_offset)
 
         if 'spare_rows' in item:
             if 'copy_value_on_spare_row' in item and item['copy_value_on_spare_row']:
