@@ -87,7 +87,7 @@
 {'cell': 'A~last_row:U~last_row', 'style': 'header1_centered', 'value': 'CONFIGURATION DES ÉTABLISSEMENTS PAR MÉDECIN'}
 {'vspace': 1}
 {'cell': 'A~last_row:E~last_row', 'style': 'colored_header', 'value': 'MÉDECIN \ ÉTABLISSEMENT'}
-{'row': 'F~last_row', 'style': 'colored_header_vertical', 'loop': 'institutions.nom_etablissement' }
+{'row': 'F~last_row', 'style': 'colored_header_vertical', 'loop': 'institutions.id' }
 {'vspace': 1}
 {'col': 'A~last_row:E~last_row', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.id'}
 {'row': 'F~last_row', 'style': 'cell', 'spare_rows': 5, 'loop': 'md_institutions', 'cast': 'str_not_empty_as_oui_non', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'copy_value_on_spare_row': True, 'remember_last_row' : True}

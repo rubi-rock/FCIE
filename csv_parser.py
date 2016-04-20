@@ -24,6 +24,7 @@ class CSVParser(object):
             if group.numero_etablissement not in self.__values.institutions.keys():
                 institution = DotMap(group.toDict()) # forces a copy because copy() does not work here
                 institution.pop('numero_pratique')
+                institution.id = '{0} ({1})'.format(institution.nom_etablissement, institution.numero_etablissement)
                 self.__values.institutions[institution.numero_etablissement] = institution
         self.__values.institutions = list(self.__values.institutions.values())
 
