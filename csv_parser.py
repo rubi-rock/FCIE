@@ -12,18 +12,20 @@ class CSVParser(object):
         self.__compile_data()
 
     def __compile_data(self):
-        self.__create_groups()
         self.__create_user_groups()
 
-    def __create_groups(self):
-        self.__values.group = DotMap()
-        for institution in self.__values['institution']:
-            if institution['numero_groupe'] is None:
+    def __create_institutions(self):
+        self.__values.institution_group = self.__values.pop('institution')
+        self.__values.institutions = DotMap()
+        for group in self.__values.institution_group:
+            if group.numero_groupe is None:
                 continue
-            if institution['numero_groupe'] not in self.__values['group'].keys():
-                institution = institution.copy()
+            group.full_key = self.__get_full_key(group)
+            if group.numero_etablissement not in self.__values.institutions.keys():
+                institution = DotMap(group.toDict()) # forces a copy because copy() does not work here
                 institution.pop('numero_pratique')
-                self.__values['group'][institution['numero_groupe']] = institution
+                self.__values.institutions[institution.numero_etablissement] = institution
+        self.__values.institutions = list(self.__values.institutions.values())
 
     def __get_full_key(self, record):
         #return '{0}.{1}'.format(record.numero_etablissement, record.numero_groupe)
@@ -33,27 +35,15 @@ class CSVParser(object):
         # rename
         self.__values.pop('md')
         self.__values.mds = self.__values.pop('proposition')
-        self.__values.institutions = self.__values.pop('institution')
+        self.__create_institutions()
 
         # clean MDs : no group
         for md in self.__values.mds:
             md.pop('numero_groupe')
             md.pop('rmx')
-
-        # Build institution list
-        tmp = []
-        processed_groups = []
-        for institution in self.__values.institutions:
-            if institution.numero_groupe is None or institution.numero_etablissement is None:
-                continue
-            if self.__get_full_key(institution) not in processed_groups:
-                institution.full_key = self.__get_full_key(institution)
-                cleaned_institution = DotMap(institution.toDict()) # forces a copy because copy() does not work here
-                cleaned_institution.pop('numero_pratique')  # remove unrelated data
-                tmp.append( cleaned_institution)
-                processed_groups.append(cleaned_institution.full_key)
-        self.__values.institution_group = self.__values.pop('institutions')
-        self.__values.institutions = tmp
+            md.prenom = md.prenom.upper()
+            md.nom = md.nom.upper()
+            md.id = '{0}, {1} ({2})'.format(md.prenom, md.nom, md.numero if 'numero' in md.keys() else '')
 
         # associate users with institution/groupe
         association_list = DotMap()
@@ -63,12 +53,13 @@ class CSVParser(object):
             idx = 0
             for institution in self.__values.institutions:
                 for group in self.__values.institution_group:
-                    if md.numero_pratique == group.numero_pratique and institution.full_key == group.full_key and institution.full_key not in associations:
+                    group.full_key = self.__get_full_key(group)
+                    if md.numero == group.numero_pratique and institution.full_key == group.full_key and institution.full_key not in associations:
                         associations[idx] = institution.full_key
                 idx += 1
 
-            md.institutions = associations
-        self.__values.md_institutions = association_list
+            md.institutions = associations.copy()
+        self.__values.md_institutions = list(association_list.values())
         self.__values.pop('institution_group')
         self.__values.pop('group')
         pass
@@ -153,9 +144,7 @@ class CSVParser(object):
 
     def get_record(self, key):
         keys = key.split('.')
-        if len(keys) > 1:
-            keys = keys[0]
-        return self.get_value('.'.join(keys))
+        return self.get_value(keys[0])
 
     def get_list_length(self, key):
         keys = key.split('.')

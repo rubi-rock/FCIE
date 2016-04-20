@@ -6,7 +6,7 @@ import logging
 import pdb
 
 from csv_parser import CSVParser
-from constants import OUI_NON, OS_LIST
+from constants import OUI_NON, BOOL_OUI_NON, OS_LIST
 
 
 def isfloat(value):
@@ -44,11 +44,19 @@ class ExcelGenerator(object):
 
     @staticmethod
     def cell_as_int(cell_value):
+        if cell_value is None:
+            return None
         return int(cell_value) if cell_value is not None else None
 
     @staticmethod
     def cell_as_oui_non(cell_value):
         value = OUI_NON[cell_value]
+        return value
+
+    @staticmethod
+    def str_not_empty_as_oui_non(cell_value):
+        value = cell_value is not None and cell_value != ''
+        value = BOOL_OUI_NON[value]
         return value
 
     @staticmethod
@@ -127,7 +135,8 @@ class ExcelGenerator(object):
             logging.exception('failed to create tab: ' + ws_definition['name'])
 
     def __add_page_break(self, item):
-        row = self.__substitute_variables(item['break'])
+        row = eval(self.__substitute_variables(item['break']))
+        self.__variables['last_row'] = row if type(row) is int else int(row)
         self.__variables['breaks'].append(row)
 
     def __build_worksheet(self, filename):
@@ -192,9 +201,11 @@ class ExcelGenerator(object):
                     elif 'break' in item.keys():
                         self.__add_page_break(item)
                     elif 'vspace' in item.keys():
-                        self.__variables['last_row'] = self.__variables['last_row'] + item['vspace']
+                        py_code = self.__prepare_eval_expression(item['vspace'])
+                        self.__variables['last_row'] = self.__variables['last_row'] + eval(py_code)
                     elif 'hspace' in item.keys():
-                        self.__variables['last_column'] = self.__variables['last_column'] + item['hspace']
+                        py_code = self.__prepare_eval_expression(item['vspace'])
+                        self.__variables['last_column'] = self.__variables['last_column'] + eval(py_code)
 
                     if 'remember_last_row' in item and lr is not None:
                         self.__variables['last_row'] = lr + 1
@@ -218,8 +229,11 @@ class ExcelGenerator(object):
         worksheet.add_table(coords, {'header_row': False, 'autofilter': False, 'banded_rows': False, 'banded_columns': False, 'first_column': False, 'last_column': False})
 
     def __prepare_eval_expression(self, py_code):
-        if py_code is None or type(py_code) is not str:
+        if py_code is None :
             return
+        if type(py_code) is int:
+            return str(py_code)
+
         for var_name in self.__variables.keys():
             if var_name in py_code:
                 py_code = py_code.replace(var_name, 'self.variables["' + var_name + '"]')
@@ -261,9 +275,6 @@ class ExcelGenerator(object):
 
     @staticmethod
     def __get_casted_value(value, definition):
-        if value is None:
-            return value
-
         if 'cast' in definition:
             obj_method = getattr(ExcelGenerator, definition['cast'])
             if obj_method is not None and callable(obj_method):
@@ -405,18 +416,37 @@ class ExcelGenerator(object):
         cell, row, col, merge_to_row, merge_to_col = self.__get_merged_cells_coords(cell)
         format = self.__get_format(item)
 
-        value_list = self.__csv.values[item['loop']] if 'loop' in item.keys() else None
+        value_list = self.__csv.get_record(item['loop']) if 'loop' in item else None
 
+        row_offset = 0
+        key = item['loop'].split('.')
+        key = key[1] if len(key) > 1 else None
         row_offset = -1
         col_offset = -1
         if value_list is not None:
-            for csv_values in value_list:
-                col_offset = -1
-                row_offset += 1
-                for idx in item['indexes']:
+            if key is not None:
+                row_offset = 0
+                for record in value_list:
                     col_offset += 1
-                    value = csv_values[idx] if idx is not None else None
+                    value = record[key]
                     write_row_value()
+            else:
+                max_col = 0
+                for record in value_list:
+                    row_offset += 1
+                    col_offset = -1
+                    for value in record:
+                        col_offset += 1
+                        write_row_value()
+                        max_col = max(max_col, col_offset)
+                if 'spare_rows' in item:
+                    value = None
+                    for r in range(item['spare_rows']):
+                        row_offset += 1
+                        col_offset = -1
+                        for c in range(max_col + 1):
+                            col_offset += 1
+                            write_row_value()
         else:
             for value in item['values']:
                 col_offset += 1

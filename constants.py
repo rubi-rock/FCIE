@@ -20,7 +20,8 @@ class ListEnum(list):
     def as_list(self):
         return self.__enum_list
 
-OUI_NON = {'T': 'Oui', 'F': 'Non', None: ''}
+OUI_NON = {'T': 'Oui', 'F': 'Non', None: ' '}
+BOOL_OUI_NON = {True: 'Oui', False: ' ', None: ' '}
 
 ExcelBlock = ListEnum(['attention_de', 'agent_purkinje', 'proposition', 'site', 'customer', 'user', 'md', 'institution', 'user_access'])
 ExcelBlockDef = ListEnum(['section', 'headers'])
