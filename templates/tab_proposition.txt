@@ -2,23 +2,27 @@
 {'header' : {'format': '&L&G&c&D - &A&R&F', 'options': {'image_left': 'images/purkinje.png'}}}
 {'footer' : {'format': '&L&10&"Times New Roman,Bold"NOTE : Les prix sont valables jusqu\'au 25 mai 2016.\n&R&10&"Times New Roman,"Page &P / &N\n&C&G', 'options': {'image_center': 'images/footer.png'}}}
 
+{'vspace': 0}
+{'cell': 'A~last_row+1:G~last_row+1', 'style': 'title', 'value': "PROPOSITION FINANCIÈRE"}
+{'vspace': 2}
+
 # Client
-{'cell': 'A1', 'style': 'section', 'value': 'Nom du client / Agence:'}
-{'cell': 'B1:C1', 'style': 'section', 'data': 'site.nom'}
-{'col': 'A2', 'style': 'cell', 'values': ["À l'attention de", "Numéro d'agence", 'Mot de passe TIP-I', 'Rue', 'Ville', 'Code postal']}
-{'cell': 'B2:C2', 'style': 'cell'}
-{'cell': 'B3:C3', 'style': 'cell', 'data': 'customer.numero_agence'}
-{'cell': 'B4:C4', 'style': 'cell', 'data': 'customer.mot_de_passe_tip-i'}
-{'cell': 'B5:C5', 'style': 'cell', 'data': 'site.adresse'}
-{'cell': 'B6:C6', 'style': 'cell', 'data': 'site.ville'}
-{'cell': 'B7:C7', 'style': 'cell', 'data': 'site.code_postal'}
+{'cell': 'A~last_row+1', 'style': 'section_locked', 'value': 'Nom du client / Agence:'}
+{'cell': 'B~last_row+1:C~last_row+1', 'style': 'section', 'data': 'site.nom'}
+{'col': 'A~last_row+2', 'style': 'cell', 'values': ["À l'attention de", "Numéro d'agence", 'Mot de passe TIP-I', 'Rue', 'Ville', 'Code postal']}
+{'cell': 'B~last_row+2:C~last_row+2', 'style': 'cell'}
+{'cell': 'B~last_row+3:C~last_row+3', 'style': 'cell', 'data': 'customer.numero_agence'}
+{'cell': 'B~last_row+4:C~last_row+4', 'style': 'cell', 'data': 'customer.mot_de_passe_tip-i'}
+{'cell': 'B~last_row+5:C~last_row+5', 'style': 'cell', 'data': 'site.adresse'}
+{'cell': 'B~last_row+6:C~last_row+6', 'style': 'cell', 'data': 'site.ville'}
+{'cell': 'B~last_row+7:C~last_row+7', 'style': 'cell', 'data': 'site.code_postal'}
 
 # Agent Purkinje
-{'cell': 'E1', 'style': 'section', 'value': 'Date:'}
-{'cell': 'F1:G1', 'style': 'section_date', 'value': '=TODAY()'}
-{'col': 'E2', 'style': 'cell', 'values': ['Représentant Purkinje:', 'Téléphone:', 'Fax:', 'Courriel:']}
-{'col': 'F2:G2', 'style': 'cell', 'values': ['', '514.355.0888', '514.355.0481', 'support@purkinje.com']}
-{'cell': 'G7', 'remember_last_row' : True}
+{'cell': 'E~last_row+1', 'style': 'section_locked', 'value': 'Date:'}
+{'cell': 'F~last_row+1:G~last_row+1', 'style': 'section_date', 'value': '=TODAY()'}
+{'col': 'E~last_row+2', 'style': 'cell', 'values': ['Représentant Purkinje:', 'Téléphone:', 'Fax:', 'Courriel:']}
+{'col': 'F~last_row+2:G~last_row+2', 'style': 'cell_locked', 'values': ['', '514.355.0888', '514.355.0481', 'support@purkinje.com']}
+{'cell': 'G~last_row+7', 'remember_last_row' : True}
 
 # Text
 {'cell': 'A~last_row+3:G~last_row+2', 'style': 'underlined_text', 'value': 'OBJET: Proposition de mise à jour de la Solution de facturation Purkinje'}
@@ -34,10 +38,10 @@
 {'col': 'B~last_row+1', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.nom'}
 {'col': 'C~last_row+1', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.prenom'}
 {'col': 'D~last_row+1:F~last_row+1', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.specialite'}
-{'col': 'G~last_row+1', 'style': 'cell_dollard', 'spare_rows': 5, 'loop': 'mds', 'value': '=IF(ISBLANK(A~current_row), "", 68)', 'locked': 1, 'remember_last_row' : True, 'copy_value_on_spare_row': True}
+{'col': 'G~last_row+1', 'style': 'cell_dollard_locked', 'spare_rows': 5, 'loop': 'mds', 'value': '=IF(ISBLANK(A~current_row), "", 68)', 'remember_last_row' : True, 'copy_value_on_spare_row': True}
     # MD - Total
 {'cell': 'F~last_row+1', 'style': 'grid_header', 'value': 'Total'}
-{'cell': 'G~last_row+1', 'style': 'header_dollard', 'value': '=SUM(G~md_first_row:G~last_row)', 'remember_last_row' : True}
+{'cell': 'G~last_row+1', 'style': 'header_dollard', 'value': '=SUM(G~md_first_row:G~last_row)', 'locked': True, 'remember_last_row' : True}
 
 # Page Break
 {'break': 'last_row'}
@@ -56,10 +60,10 @@
 {'col': 'D~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user.mot_de_passe'}
 {'col': 'E~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'value': ''}
 {'col': 'F~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'value': ' ', 'validation': {'validate': 'list', 'source': [' ', 'Win. XP', 'Win. 7, 8 ou 10', 'Win. Serveur', 'OSX', 'iOS', 'Android']}, 'copy_value_on_spare_row': True}
-{'col': 'G~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'value': '=IF(ISBLANK(A~current_row), "", 250)', 'locked': 1, 'remember_last_row' : True, 'copy_value_on_spare_row': True}
+{'col': 'G~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'value': '=IF(ISBLANK(A~current_row), "", 250)', 'locked': True, 'remember_last_row' : True, 'copy_value_on_spare_row': True}
     # Frais demarrage - Total
 {'cell': 'F~last_row+1', 'style': 'grid_header', 'value': 'Total'}
-{'cell': 'G~last_row+1', 'style': 'header_dollard', 'value': '=SUM(E~user_first_row:E~last_row)', 'remember_last_row' : True}
+{'cell': 'G~last_row+1', 'style': 'header_dollard', 'value': '=SUM(G~user_first_row:G~last_row)', 'locked': True, 'remember_last_row' : True}
 {'vspace': 1}
 {'cell': 'A~last_row+1:G~last_row+1', 'style': 'bold_text', 'value': '* Votre courriel ne sera utiliser que pour vous envoyer votre mot de passe si besoin.', 'remember_last_row' : True}
 
@@ -143,4 +147,5 @@
 {'cell': 'B~last_row+2:C~last_row+2', 'style': 'input'}
 {'cell': 'E~last_row+2', 'style': 'text_vcentered', 'value': "Fréquence :"}
 {'cell': 'F~last_row+2:G~last_row+2', 'style': 'input'}
+
 

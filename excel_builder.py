@@ -76,6 +76,8 @@ class ExcelGenerator(object):
     def __add_format(self, style):
         name = style['name']
         properties = style['properties']
+        if 'locked' not in properties:
+            properties['locked'] = False
         self.__formats[name] = self.__workbook.add_format(properties)
 
     @staticmethod
@@ -204,6 +206,8 @@ class ExcelGenerator(object):
             if 'breaks' in self.__variables:
                 worksheet.set_h_pagebreaks(self.__variables['breaks'])
 
+#            worksheet.protect({ 'format_cells': True, 'format_rows': True, 'insert_columns': True, 'delete_columns': True, 'select_locked_cells': False})
+            worksheet.protect()
             return worksheet
         except:
             logging.exception('Unable to process tab definition: ' + str(ws_definition))
