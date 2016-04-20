@@ -3,6 +3,7 @@ import xlsxwriter
 from xlsxwriter.utility import xl_rowcol_to_cell, xl_cell_to_rowcol
 import ast
 import logging
+import pdb
 
 from csv_parser import CSVParser
 from constants import OUI_NON, OS_LIST
@@ -15,6 +16,9 @@ def isfloat(value):
     except ValueError:
         return False
 
+class BreakPointException(Exception):
+    def __init___(self):
+        pass
 
 class ExcelGenerator(object):
     DEFAULT_ROW_HEIGHT = 20
@@ -172,6 +176,9 @@ class ExcelGenerator(object):
             for item in ws_definition['content']:
                 try:
                     lc,lr = None, None
+
+                    self.__check_breakpoint(item)
+
                     if 'cell' in item.keys():
                         lr, lc = self.__fill_cell(worksheet, item)
                     elif 'col' in item.keys():
@@ -315,6 +322,13 @@ class ExcelGenerator(object):
         var = item['save'].split('=', 1)
         py_code = self.__prepare_eval_expression(var[1])
         self.variables[var[0]] = eval(py_code)
+
+    def __check_breakpoint(self, item):
+        try:
+            if 'breakpoint' in item and item['breakpoint']:
+                raise BreakPointException()
+        except:
+            pass
 
     def __fill_cell(self, worksheet, item):
         try:

@@ -1,15 +1,76 @@
 import csv
 from io import StringIO
+from collections import OrderedDict
 from constants import ExcelBlock
+from dotmap import DotMap
 
 
 class CSVParser(object):
     def __init__(self, filename):
-        self.__values = {}
+        self.__values = DotMap()
         self.__parse(filename)
-        self.__build_tree()
+        self.__compile_data()
 
-    def __build_tree(self):
+    def __compile_data(self):
+        self.__create_groups()
+        self.__create_user_groups()
+
+    def __create_groups(self):
+        self.__values.group = DotMap()
+        for institution in self.__values['institution']:
+            if institution['numero_groupe'] is None:
+                continue
+            if institution['numero_groupe'] not in self.__values['group'].keys():
+                institution = institution.copy()
+                institution.pop('numero_pratique')
+                self.__values['group'][institution['numero_groupe']] = institution
+
+    def __get_full_key(self, record):
+        #return '{0}.{1}'.format(record.numero_etablissement, record.numero_groupe)
+        return '{0}'.format(record.numero_etablissement)
+
+    def __create_user_groups(self):
+        # rename
+        self.__values.pop('md')
+        self.__values.mds = self.__values.pop('proposition')
+        self.__values.institutions = self.__values.pop('institution')
+
+        # clean MDs : no group
+        for md in self.__values.mds:
+            md.pop('numero_groupe')
+            md.pop('rmx')
+
+        # Build institution list
+        tmp = []
+        processed_groups = []
+        for institution in self.__values.institutions:
+            if institution.numero_groupe is None or institution.numero_etablissement is None:
+                continue
+            if self.__get_full_key(institution) not in processed_groups:
+                institution.full_key = self.__get_full_key(institution)
+                cleaned_institution = DotMap(institution.toDict()) # forces a copy because copy() does not work here
+                cleaned_institution.pop('numero_pratique')  # remove unrelated data
+                tmp.append( cleaned_institution)
+                processed_groups.append(cleaned_institution.full_key)
+        self.__values.institution_group = self.__values.pop('institutions')
+        self.__values.institutions = tmp
+
+        # associate users with institution/groupe
+        association_list = DotMap()
+        for md in self.__values.mds:
+            associations = [None] * len(self.__values.institutions)
+            association_list[md.numero] = associations
+            idx = 0
+            for institution in self.__values.institutions:
+                for group in self.__values.institution_group:
+                    if md.numero_pratique == group.numero_pratique and institution.full_key == group.full_key and institution.full_key not in associations:
+                        associations[idx] = institution.full_key
+                idx += 1
+
+            md.institutions = associations
+        self.__values.md_institutions = association_list
+        self.__values.pop('institution_group')
+        self.__values.pop('group')
         pass
 
     def __parse(self, filename):
@@ -50,7 +111,7 @@ class CSVParser(object):
                     if excel_block in ['site', 'customer']:
                         self.__values[excel_block] = values
                     else:
-                        self.__values[excel_block].append(values)
+                        self.__values[excel_block].append(DotMap(values))
 
     @property
     def values(self):
