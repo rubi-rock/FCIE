@@ -4,13 +4,14 @@
 {'style': {'name' : 'colored_section', 'properties': {'border': 2, 'bold': True, 'text_wrap': True, 'font_name': 'Times New Roman', 'bg_color': 'D4DFEE', 'align': 'center', 'valign': 'vcenter', 'locked': True}}}
 {'style': {'name' : 'grid_header', 'properties': {'border': 2, 'bold': False, 'text_wrap': True, 'font_name': 'Times New Roman', 'locked': True}}}
 {'style': {'name' : 'header_dollard', 'properties': {'border': 2, 'text_wrap': True, 'font_name': 'Times New Roman', 'num_format': '$0.00', 'locked': True}}}
-{'style': {'name' : 'colored_header', 'properties': {'border': 2, 'text_wrap': True, 'font_name': 'Times New Roman', 'bg_color': 'D4DFEE'}}}
+{'style': {'name' : 'colored_header', 'properties': {'border': 2, 'text_wrap': True, 'font_name': 'Times New Roman', 'bg_color': 'D4DFEE', 'locked': True}}}
 {'style': {'name' : 'cell', 'properties': {'valign': 'top', 'text_wrap': True, 'border': 1}}}
 {'style': {'name' : 'cell_locked', 'properties': {'valign': 'top', 'text_wrap': True, 'border': 1, 'locked': True}}}
 {'style': {'name' : 'cell_percent', 'properties': {'valign': 'top', 'num_format': '0.0%', 'text_wrap': True, 'border': 1}}}
 {'style': {'name' : 'cell_dollard', 'properties': {'valign': 'top', 'num_format': '$0.00', 'text_wrap': True, 'border': 1}}}
 {'style': {'name' : 'cell_dollard_locked', 'properties': {'valign': 'top', 'num_format': '$0.00', 'text_wrap': True, 'border': 1, 'locked': True}}}
 {'style': {'name' : 'input', 'properties': {'valign': 'top', 'text_wrap': True, 'bottom': 1}}}
+{'style': {'name' : 'input_dollard', 'properties': {'valign': 'top', 'text_wrap': True, 'num_format': '$0.00', 'bottom': 1}}}
 {'style': {'name' : 'text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'locked': True}}}
 {'style': {'name' : 'text_vcentered', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'valign': 'vcenter'}}}
 {'style': {'name' : 'underlined_text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'underline': True}}}

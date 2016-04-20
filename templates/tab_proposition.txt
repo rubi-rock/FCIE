@@ -52,26 +52,26 @@
 # List des utilisateurs & frais de démarrage
 {'vspace': 1}
     # users - section
-{'cell': 'A~last_row+1:L~last_row+1', 'style': 'colored_section', 'value': 'FRAIS DE DÉMARRAGE (coûts de formation)', 'remember_last_row' : True}
+{'cell': 'A~last_row+1:U~last_row+1', 'style': 'colored_section', 'value': 'FRAIS DE DÉMARRAGE (coûts de formation)', 'remember_last_row' : True}
     # users - headers
-{'row': 'A~last_row+1', 'style': 'colored_header', 'values': ["Nom d'utilisateur", 'Nom', 'Prénom', 'Mot de passe', 'Courriel *', None, 'Coût']}
-{'cell': 'A~last_row+1:B~last_row+1', 'style': 'colored_header', 'value': "Nom d'utilisateur"}
-{'cell': 'C~last_row+1:D~last_row+1', 'style': 'colored_header', 'value': 'Nom'}
-{'cell': 'E~last_row+1:F~last_row+1', 'style': 'colored_header', 'value': 'Prénom'}
-{'cell': 'G~last_row+1:H~last_row+1', 'style': 'colored_header', 'value': 'Mot de passe'}
-{'cell': 'I~last_row+1:J~last_row+1', 'style': 'colored_header', 'value': 'Courriel *'}
-{'cell': 'K~last_row+1:L~last_row+1', 'style': 'colored_header', 'value': 'Coût'}
+{'cell': 'A~last_row+1:C~last_row+1', 'style': 'colored_header', 'value': "Nom d'utilisateur"}
+{'cell': 'D~last_row+1:F~last_row+1', 'style': 'colored_header', 'value': 'Nom'}
+{'cell': 'G~last_row+1:J~last_row+1', 'style': 'colored_header', 'value': 'Prénom'}
+{'cell': 'K~last_row+1:L~last_row+1', 'style': 'colored_header', 'value': 'Mot de passe'}
+{'cell': 'M~last_row+1:Q~last_row+1', 'style': 'colored_header', 'value': 'Courriel *'}
+{'cell': 'R~last_row+1:S~last_row+1', 'style': 'colored_header', 'value': 'OS'}
+{'cell': 'T~last_row+1:U~last_row+1', 'style': 'colored_header', 'value': 'Coût'}
     # users - List
-{'col': 'A~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user.utilisateur', 'save': 'user_first_row=current_row'}
-{'col': 'B~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user.nom'}
-{'col': 'C~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user.prenom'}
-{'col': 'D~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user.mot_de_passe'}
-{'col': 'E~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'value': ''}
-{'col': 'F~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'value': ' ', 'validation': {'validate': 'list', 'source': [' ', 'Win. XP', 'Win. 7, 8 ou 10', 'Win. Serveur', 'OSX', 'iOS', 'Android']}, 'copy_value_on_spare_row': True}
-{'col': 'G~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'value': '=IF(ISBLANK(A~current_row), "", 250)', 'locked': True, 'remember_last_row' : True, 'copy_value_on_spare_row': True}
+{'col': 'A~last_row+2:C~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user.utilisateur', 'save': 'user_first_row=current_row'}
+{'col': 'D~last_row+2:F~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user.nom'}
+{'col': 'G~last_row+2:J~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user.prenom'}
+{'col': 'K~last_row+2:L~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user.mot_de_passe'}
+{'col': 'M~last_row+2:Q~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'value': ''}
+{'col': 'R~last_row+2:S~last_row+2', 'style': 'cell', 'spare_rows': 5, 'loop': 'user', 'value': ' ', 'validation': {'validate': 'list', 'source': [' ', 'Win. XP', 'Win. 7, 8 ou 10', 'Win. Serveur', 'OSX', 'iOS', 'Android']}, 'copy_value_on_spare_row': True}
+{'col': 'T~last_row+2:U~last_row+2', 'style': 'cell_locked', 'spare_rows': 5, 'loop': 'user', 'value': '=IF(ISBLANK(A~current_row), "", 250)', 'remember_last_row' : True, 'copy_value_on_spare_row': True}
     # Frais demarrage - Total
-{'cell': 'F~last_row+1', 'style': 'grid_header', 'value': 'Total'}
-{'cell': 'G~last_row+1', 'style': 'header_dollard', 'value': '=SUM(G~user_first_row:G~last_row)', 'locked': True, 'remember_last_row' : True}
+{'cell': 'R~last_row+1:S~last_row+1', 'style': 'grid_header', 'value': 'Total'}
+{'cell': 'T~last_row+1:U~last_row+1', 'style': 'header_dollard', 'value': '=SUM(G~user_first_row:G~last_row)', 'locked': True, 'remember_last_row' : True}
 {'vspace': 1}
 {'cell': 'A~last_row+1:U~last_row+1', 'style': 'bold_text', 'value': '* Votre courriel ne sera utiliser que pour vous envoyer votre mot de passe si besoin.', 'remember_last_row' : True}
 
@@ -143,11 +143,11 @@
 {'cell': 'K~last_row+10:P~last_row+10', 'style': 'text_vcentered', 'value': "Ville (province) Code postale :"}
 {'cell': 'Q~last_row+10:U~last_row+10', 'style': 'input', 'remember_last_row' : True}
 #RENSEIGNEMENTS SUR LES PAIEMENTS
-{'vspace': 4}
+{'vspace': 2}
 {'cell': 'A~last_row+1:U~last_row+1', 'style': 'header1', 'value': "RENSEIGNEMENTS SUR LES PAIEMENTS"}
-{'cell': 'A~last_row+2:D~last_row+2', 'style': 'text_vcentered', 'value': "Montant :", 'save': 'paiment_row=current_row'}
-{'cell': 'E~last_row+2:I~last_row+2', 'style': 'input'}
-{'cell': 'K~last_row+2:P~last_row+2', 'style': 'text_vcentered', 'value': "Fréquence :"}
-{'cell': 'Q~last_row+2:U~last_row+2', 'style': 'input'}
+{'cell': 'A~last_row+2:B~last_row+2', 'style': 'text_vcentered', 'value': "Montant :", 'save': 'paiment_row=current_row'}
+{'cell': 'C~last_row+2:D~last_row+2', 'style': 'input_dollard'}
+{'cell': 'F~last_row+2:G~last_row+2', 'style': 'text_vcentered', 'value': "Fréquence :"}
+{'cell': 'H~last_row+2:I~last_row+2', 'style': 'input'}
 
 
