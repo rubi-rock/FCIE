@@ -19,6 +19,7 @@ class CSVParser(object):
         self.__create_user_groups()
         self.__update_MD_biller_status()
         self.__create_user_md_association()
+        self.__create_md_user_association()
 
     def __create_institutions(self):
         self.__values.institution_group = self.__values.pop('institution')
@@ -69,7 +70,7 @@ class CSVParser(object):
 
     def __adjust_Users(self):
         for user in self.__values.users:
-            user.id = '{0}, {1} ({2})'.format(user.prenom, user.nom, user.utilisateur if 'numero' in user.keys() else '')
+            user.id = '{0}, {1} ({2})'.format(user.prenom, user.nom, user.utilisateur if 'utilisateur' in user.keys() else '')
         pass
 
     def __create_user_groups(self):
@@ -106,25 +107,49 @@ class CSVParser(object):
     def __create_user_md_association(self):
         association_list = DotMap()
         for user in self.__values.users:
-            associations = [None] * len(self.__values.billers)
+            associations = [None] * len(self.__values.mds)
             idx = 0
-            for biller in self.__values.billers:
-                if 'users' not in biller.keys():
+            for md in self.__values.mds:
+                if 'users' not in md.keys():
                     continue
-                for link in biller.users:
+                for link in md.users:
                     if user.utilisateur == link:
-                        associations[idx] =  biller.numero
+                        associations[idx] =  md.numero
                 idx += 1
-            # Check users without limitations, then it means they can bill for every biller
+            # Check users without limitations, then it means they can bill for every md
             counts = Counter(associations)
-            if len(counts) == 1 and counts[None] == len(self.__values.billers):
+            if len(counts) == 1 and counts[None] == len(self.__values.mds):
                 associations = []
-                for biller in self.__values.billers:
-                    associations.append(biller.numero)
+                for md in self.__values.mds:
+                    associations.append(md.numero)
 
             association_list[user.utilisateur] = associations
 
         self.__values.user_md = list(association_list.values())
+        pass
+
+    def __create_md_user_association(self):
+        association_list = DotMap()
+        for md in self.__values.mds:
+            associations = [None] * len(self.__values.users)
+            idx = 0
+            for user in self.__values.users:
+                if 'users' not in md.keys():
+                    continue
+                for link in md.users:
+                    if user.utilisateur == link:
+                        associations[idx] = user.utilisateur
+                idx += 1
+            # Check users without limitations, then it means they can bill for every md
+            counts = Counter(associations)
+            if len(counts) == 1 and counts[None] == len(self.__values.users):
+                associations = []
+                for user in self.__values.users:
+                    associations.append(user.utilisateur if md.is_biller else None)
+
+            association_list[md.numero] = associations
+
+        self.__values.md_user = list(association_list.values())
         pass
 
     def __parse(self, filename):

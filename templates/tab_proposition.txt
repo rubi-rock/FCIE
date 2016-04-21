@@ -101,11 +101,11 @@
 # MD/Etablissement - section
 {'cell': 'A(last_row):T(last_row)', 'style': 'header1_centered', 'value': 'UTILISATEURS FACTURANT POUR LES MÉDECINS'}
 {'vspace': 1}
-{'cell': 'A(last_row):E(last_row)', 'style': 'colored_header', 'value': 'UTILISATEUR \ MÉDECIN'}
-{'row': 'F(last_row)', 'style': 'colored_header_vertical', 'loop': 'billers.id' }
+{'cell': 'A(last_row):E(last_row)', 'style': 'colored_header', 'value': 'MÉDECIN / UTILISATEUR'}
+{'row': 'F(last_row)', 'style': 'colored_header_vertical', 'loop': 'users.id' }
 {'vspace': 1}
-{'col': 'A(last_row):E(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'users.id'}
-{'row': 'F(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'user_md', 'cast': 'str_not_empty_as_oui_non', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'copy_value_on_spare_row': True, 'remember_last_row' : True}
+{'col': 'A(last_row):E(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.id'}
+{'row': 'F(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'md_user', 'cast': 'str_not_empty_as_oui_non', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'copy_value_on_spare_row': True, 'remember_last_row' : True}
 
 # Page Break
 {'break': 'last_row'}
