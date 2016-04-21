@@ -12,7 +12,10 @@ class CSVParser(object):
         self.__compile_data()
 
     def __compile_data(self):
+        self.__cleanup_names()
+        self.__adjust_MDs()
         self.__create_user_groups()
+        self.__update_MD_biller_status()
 
     def __create_institutions(self):
         self.__values.institution_group = self.__values.pop('institution')
@@ -32,20 +35,24 @@ class CSVParser(object):
         #return '{0}.{1}'.format(record.numero_etablissement, record.numero_groupe)
         return '{0}'.format(record.numero_etablissement)
 
-    def __create_user_groups(self):
+    def __cleanup_names(self):
         # rename
         self.__values.pop('md')
         self.__values.mds = self.__values.pop('proposition')
         self.__create_institutions()
+        self.__values.users = self.__values.pop('user')
 
+    def __adjust_MDs(self):
         # clean MDs : no group
         for md in self.__values.mds:
             md.pop('numero_groupe')
             md.pop('rmx')
             md.prenom = md.prenom.upper()
             md.nom = md.nom.upper()
+            md.is_biller = False
             md.id = '{0}, {1} ({2})'.format(md.prenom, md.nom, md.numero if 'numero' in md.keys() else '')
 
+    def __create_user_groups(self):
         # associate users with institution/groupe
         association_list = DotMap()
         for md in self.__values.mds:
@@ -63,6 +70,15 @@ class CSVParser(object):
         self.__values.md_institutions = list(association_list.values())
         self.__values.pop('institution_group')
         self.__values.pop('group')
+
+
+    def __update_MD_biller_status(self):
+        for md in self.__values.mds:
+            for institution in md.institutions:
+                biller = institution is not None
+                if biller:
+                    md.is_biller = True
+                    continue
         pass
 
     def __parse(self, filename):
@@ -99,6 +115,8 @@ class CSVParser(object):
                     csv_line = csv.reader(csv_stream, delimiter=',', quotechar='"')
                     csv_line = next(csv_line)
                     csv_line = [None if col == '' else col for col in csv_line]
+                    csv_line = [True if col == 'T' else col for col in csv_line]
+                    csv_line = [False if col == 'F' else col for col in csv_line]
                     values = dict(zip(headers, csv_line))
                     if excel_block in ['site', 'customer']:
                         self.__values[excel_block] = values

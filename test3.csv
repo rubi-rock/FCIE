@@ -42,8 +42,8 @@ PURKINJEKH,purkinjekh,Hould,Kevin
 HOUKEV01,houkev01,Hould,Kevin
 LAVCAR01,lavcar01,Lavoie,Caroline
 ===md===
-"Numero pratique","Numero groupe",Nom,Prenom,Specialite,RMX
-179295,11085,LANDRY,LINDA,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine",F
+"Numero pratique","Numero groupe",Nom,Prenom,Specialite,RMX,USERS
+179295,11085,LANDRY,LINDA,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine",F,"1091495|LAVCAR01"
 109149,16068,RIOUX,CAROLINE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine",F
 109296,16170,PEDNEAULT,JANIE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine",F
 176360,11085,LEMIEUX,GHISLAIN,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine",F

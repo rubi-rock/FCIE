@@ -236,7 +236,7 @@ class ExcelGenerator(object):
 
         for var_name in self.__variables.keys():
             if var_name in py_code:
-                py_code = py_code.replace(var_name, 'self.variables["' + var_name + '"]')
+                py_code = py_code.replace(var_name, "self.variables['" + var_name + "']")
         return py_code
 
     def __substitute_variables(self, cell_value):
@@ -245,64 +245,69 @@ class ExcelGenerator(object):
         for var_name in self.__variables.keys():
             if var_name in cell_value:
                 cell_value = cell_value.replace(var_name, str(self.variables[var_name]))
-        return cell_value.replace('~', '')
+        return cell_value
+
+    def __substitute_variable_names(self, cell):
+        output = cell
+        for var_name in self.__variables.keys():
+            expression = r'(\([\s0-9+-\/\*]*{0}[\s0-9+-/*]*\))'.format(var_name)
+            matches = re.findall(expression, output)
+            if len(matches) > 0:
+                find_results = [x for x in matches if x]
+                for result in find_results:
+                    py_code = self.__prepare_eval_expression(result)
+                    value = eval(py_code)
+                    output = output.replace(result, str(value))
+        return output
 
     def __substitute_last_coords(self, cell):
-        pieces = cell.split('~')
-        if len(pieces) == 1:
-            return cell
-
-        coord_components = []
-        for piece in pieces:
-            if ':' not in piece:
-                coord_components.append(piece)
-            else:
-                for tmp in re.split('(^[^:]+)(:)([^:]+$)', piece):
-                    if len(tmp) > 0:
-                        coord_components.append(tmp)
-
-        for idx in range(len(coord_components)):
-            if 'last_column' in coord_components[idx]:
-                py_code = self.__prepare_eval_expression(coord_components[idx])
-                coord_components[idx] = chr(ord('A') + eval(py_code))
-
-            if 'last_row' in coord_components[idx]:
-                py_code = self.__prepare_eval_expression(coord_components[idx])
-                coord_components[idx] = str(eval(py_code))
-
-        cell = ''.join(coord_components)
-        return cell
+        # last_row
+        try:
+            if cell is None or type(cell) is not str:
+                return cell
+            cell = self.__substitute_variable_names(cell)
+        except:
+            logging.exception('Unable to calculate cell coordonates: ' + str(cell))
+            raise
+        return cell #.replace(' ', '').replace('(', '').replace(')', '')
 
     @staticmethod
     def __get_casted_value(value, definition):
         if 'cast' in definition:
-            obj_method = getattr(ExcelGenerator, definition['cast'])
-            if obj_method is not None and callable(obj_method):
-                return obj_method(value)
+            try:
+                obj_method = getattr(ExcelGenerator, definition['cast'])
+                if obj_method is not None and callable(obj_method):
+                    return obj_method(value)
+            except:
+                logging.exception('Unable to cast value: "' + str(value) + '" based on: ' + definition)
+                return value
         return value
 
     def write_value(self, worksheet, item, cell_value, format, row, col, row_offset, col_offset, merge_to_row, merge_to_col):
         cell = xl_rowcol_to_cell(row + row_offset, col + col_offset)
         self.__variables['current_row'] = row + row_offset + 1
         self.__variables['current_col'] = col + col_offset + 1
-        cell_value = self.__substitute_variables(cell_value)
+        value = self.__substitute_last_coords(cell_value)
+        value = self.__substitute_variables(value)
 
         if 'height' in item:
             worksheet.set_row(row, item['height'])
 
         if merge_to_col is not None:
             cell = cell + ':' + xl_rowcol_to_cell(merge_to_row + row_offset, merge_to_col)
-            worksheet.merge_range(cell, self.__get_casted_value(cell_value, item), format)
-        elif cell_value is not None and type(cell_value) is str and cell_value.strip().startswith('='):
-            worksheet.write_formula(cell, cell_value, format)
+            worksheet.merge_range(cell, self.__get_casted_value(value, item), format)
+        elif cell_value is not None and type(value) is str and cell_value.strip().startswith('='):
+            worksheet.write_formula(cell, value, format)
         else:
             if 'textbox' in item:
-                worksheet.insert_textbox(cell, self.__get_casted_value(cell_value, item), item['textbox'])
+                worksheet.insert_textbox(cell, self.__get_casted_value(value, item), item['textbox'])
             else:
-                worksheet.write(cell, self.__get_casted_value(cell_value, item), format)
+                worksheet.write(cell, self.__get_casted_value(value, item), format)
 
         if 'validation' in item.keys():
             worksheet.data_validation(cell, item['validation'].copy())
+
+        #logging.info('Write Value: {0}\t\t{1}'.format(cell, value))
 
     def __get_format(self, item):
         style = None
