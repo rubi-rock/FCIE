@@ -2,7 +2,7 @@
 Nom,Adresse,Ville,"Code Postal",Province,Pays,Telephone,Fax
 "Clinique Purkinje Demo","614 St-Jaques, Suite 200",Montréal,"H3C 1E2",QC,Canada,514-355-0888,514-355-0481
 ===Proposition===
-Numero,Nom,Prenom,Specialite
+Numero,Nom,Prenom,Specialite,users
 195076,COTE,GUILDO,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
 183408,MASSICOTTE,GUY,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"
 196071,CAMBRON,HELENE,"000 Omnipratique et m?decine familiale/General Practice and Family Medicine"

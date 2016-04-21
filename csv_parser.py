@@ -12,10 +12,12 @@ class CSVParser(object):
         self.__compile_data()
 
     def __compile_data(self):
+        self.__copy_mdusers_to_proposition()
         self.__cleanup_names()
         self.__adjust_MDs()
         self.__create_user_groups()
         self.__update_MD_biller_status()
+        self.__create_user_md_association()
 
     def __create_institutions(self):
         self.__values.institution_group = self.__values.pop('institution')
@@ -42,6 +44,14 @@ class CSVParser(object):
         self.__create_institutions()
         self.__values.users = self.__values.pop('user')
 
+    def __copy_mdusers_to_proposition(self):
+        for md in self.__values.md:
+            if 'users' not in md.keys():
+                continue
+            for prop in self.__values.proposition:
+                if md.numero_pratique == prop.numero:
+                    prop['users'] = md.users
+        pass
     def __adjust_MDs(self):
         # clean MDs : no group
         for md in self.__values.mds:
@@ -51,6 +61,9 @@ class CSVParser(object):
             md.nom = md.nom.upper()
             md.is_biller = False
             md.id = '{0}, {1} ({2})'.format(md.prenom, md.nom, md.numero if 'numero' in md.keys() else '')
+            if 'users' in md.keys():
+                md.users = md.users.split('|')
+        pass
 
     def __create_user_groups(self):
         # associate users with institution/groupe
@@ -71,7 +84,6 @@ class CSVParser(object):
         self.__values.pop('institution_group')
         self.__values.pop('group')
 
-
     def __update_MD_biller_status(self):
         for md in self.__values.mds:
             for institution in md.institutions:
@@ -79,6 +91,21 @@ class CSVParser(object):
                 if biller:
                     md.is_biller = True
                     continue
+
+    def __create_user_md_association(self):
+        association_list = DotMap()
+        for user in self.__values.users:
+            associations = [None] * len(self.__values.mds)
+            association_list[user.utilisateur] = associations
+            idx = 0
+            for md in self.__values.mds:
+                if 'users' not in md.keys():
+                    continue
+                for link in md.users:
+                    if user.utilisateur == link:
+                        associations[idx] =  md.numero
+                idx += 1
+        self.__values.user_md = list(association_list.values())
         pass
 
     def __parse(self, filename):
@@ -171,3 +198,4 @@ class CSVParser(object):
             return len(self.__values[keys[0]])
 
         return 0
+
