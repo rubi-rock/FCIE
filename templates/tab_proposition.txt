@@ -96,6 +96,20 @@
 # Page Break
 {'break': 'last_row'}
 
+# Liste des utilisateurs par MD
+{'vspace': 1}
+# MD/Etablissement - section
+{'cell': 'A(last_row):T(last_row)', 'style': 'header1_centered', 'value': 'UTILISATEURS FACTURANT POUR LES MÉDECINS'}
+{'vspace': 1}
+{'cell': 'A(last_row):E(last_row)', 'style': 'colored_header', 'value': 'UTILISATEUR \ MÉDECIN'}
+{'row': 'F(last_row)', 'style': 'colored_header_vertical', 'loop': 'billers.id' }
+{'vspace': 1}
+{'col': 'A(last_row):E(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'users.id'}
+{'row': 'F(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'user_md', 'cast': 'str_not_empty_as_oui_non', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'copy_value_on_spare_row': True, 'remember_last_row' : True}
+
+# Page Break
+{'break': 'last_row'}
+
 # Text
 {'vspace': 3}
 {'cell': 'A(last_row):T(last_row+1)', 'style': 'text', 'value': "Le prix sus-mentionnés inclut les frais d'utilisation et de soutien de la nouvelle solution de facturation infonuagique Purkinje \"version SYRA\" ainsi que le soutien de la version précédente durant une période de 3 ans."}

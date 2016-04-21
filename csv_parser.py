@@ -1,6 +1,6 @@
 import csv
 from io import StringIO
-from collections import OrderedDict
+from collections import Counter
 from constants import ExcelBlock
 from dotmap import DotMap
 
@@ -15,6 +15,7 @@ class CSVParser(object):
         self.__copy_mdusers_to_proposition()
         self.__cleanup_names()
         self.__adjust_MDs()
+        self.__adjust_Users()
         self.__create_user_groups()
         self.__update_MD_biller_status()
         self.__create_user_md_association()
@@ -52,6 +53,7 @@ class CSVParser(object):
                 if md.numero_pratique == prop.numero:
                     prop['users'] = md.users
         pass
+
     def __adjust_MDs(self):
         # clean MDs : no group
         for md in self.__values.mds:
@@ -63,6 +65,11 @@ class CSVParser(object):
             md.id = '{0}, {1} ({2})'.format(md.prenom, md.nom, md.numero if 'numero' in md.keys() else '')
             if 'users' in md.keys():
                 md.users = md.users.split('|')
+        pass
+
+    def __adjust_Users(self):
+        for user in self.__values.users:
+            user.id = '{0}, {1} ({2})'.format(user.prenom, user.nom, user.utilisateur if 'numero' in user.keys() else '')
         pass
 
     def __create_user_groups(self):
@@ -85,26 +92,38 @@ class CSVParser(object):
         self.__values.pop('group')
 
     def __update_MD_biller_status(self):
+        billers = {}
         for md in self.__values.mds:
             for institution in md.institutions:
                 biller = institution is not None
                 if biller:
                     md.is_biller = True
-                    continue
+                    if md.numero not in billers.keys():
+                        billers[md.numero] = md
+            continue
+        self.__values.billers = list(billers.values())
 
     def __create_user_md_association(self):
         association_list = DotMap()
         for user in self.__values.users:
-            associations = [None] * len(self.__values.mds)
-            association_list[user.utilisateur] = associations
+            associations = [None] * len(self.__values.billers)
             idx = 0
-            for md in self.__values.mds:
-                if 'users' not in md.keys():
+            for biller in self.__values.billers:
+                if 'users' not in biller.keys():
                     continue
-                for link in md.users:
+                for link in biller.users:
                     if user.utilisateur == link:
-                        associations[idx] =  md.numero
+                        associations[idx] =  biller.numero
                 idx += 1
+            # Check users without limitations, then it means they can bill for every biller
+            counts = Counter(associations)
+            if len(counts) == 1 and counts[None] == len(self.__values.billers):
+                associations = []
+                for biller in self.__values.billers:
+                    associations.append(biller.numero)
+
+            association_list[user.utilisateur] = associations
+
         self.__values.user_md = list(association_list.values())
         pass
 
