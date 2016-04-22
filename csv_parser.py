@@ -78,6 +78,9 @@ class CSVParser(object):
         # clean MDs : no group
         for md in self.__values.mds:
             md.prenom = md.prenom.upper()
+            spec = md.specialite.replace('/', '\n').split(' ', 1)
+            md.code_specilite = spec[0]
+            md.specialite = spec[1]
             md.nom = md.nom.upper()
             md.is_biller = True
             md.id = '{0}, {1} ({2})'.format(md.prenom, md.nom, md.numero if 'numero' in md.keys() else '')

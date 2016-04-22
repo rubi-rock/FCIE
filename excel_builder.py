@@ -239,6 +239,12 @@ class ExcelGenerator(object):
         return py_code
 
     def __substitute_variables(self, cell_value):
+        if type(cell_value) is dict:
+            output_dict = {}
+            for name, value in cell_value.items():
+                output_dict[name] = self.__substitute_variables(value)
+            return output_dict
+
         if cell_value is None or type(cell_value) is not str:
             return cell_value
         for var_name in self.__variables.keys():
@@ -247,6 +253,12 @@ class ExcelGenerator(object):
         return cell_value
 
     def __substitute_variable_names(self, cell):
+        if type(cell) is dict:
+            output_dict = {}
+            for name, value in cell.items():
+                output_dict[name] = self.__substitute_variable_names(value)
+            return output_dict
+
         output = cell
         for var_name in self.__variables.keys():
             expression = r'(\([\s0-9+-\/\*]*{0}[\s0-9+-/*]*\))'.format(var_name)
@@ -290,7 +302,7 @@ class ExcelGenerator(object):
         value = self.__substitute_variables(value)
 
         if 'height' in item:
-            worksheet.set_row(row, item['height'])
+            worksheet.set_row(row + row_offset, item['height'])
 
         if merge_to_col is not None:
             cell = cell + ':' + xl_rowcol_to_cell(merge_to_row + row_offset, merge_to_col)
@@ -306,6 +318,12 @@ class ExcelGenerator(object):
         if 'validation' in item.keys():
             worksheet.data_validation(cell, item['validation'].copy())
 
+        if 'conditional_formating' in item.keys():
+            formating = item['conditional_formating'].copy()
+            formating = self.__substitute_variable_names(formating)
+            if 'format' in formating.keys():
+                formating['format'] = self.__formats[formating['format']]
+            worksheet.conditional_format(cell, formating)
         #logging.info('Write Value: {0}\t\t{1}'.format(cell, value))
 
     def __get_format(self, item):
