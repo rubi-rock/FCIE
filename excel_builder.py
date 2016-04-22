@@ -105,12 +105,12 @@ class ExcelGenerator(object):
                 worksheet.hide_gridlines(value)
             elif name == 'columns':
                 if type(value['width']) is int:
-                    cols = 'A:' + chr(ord('A') + value['count'])
+                    col_cel = 'A:' + ''.join([c if not c.isdigit() else '' for c in xl_rowcol_to_cell(0, value['count'])])
                     worksheet.set_column(cols, value['width'])
                 elif type(value['width']) is list:
                     i = 0
                     for col_width in value['width']:
-                        col_cel = chr(ord('A') + i)
+                        col_cel = ''.join([c if not c.isdigit() else '' for c in xl_rowcol_to_cell(0, i)])
                         col_cel = col_cel + ':' + col_cel
                         worksheet.set_column(col_cel, col_width)
                         i += 1
