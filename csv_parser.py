@@ -35,10 +35,10 @@ class CSVParser(object):
     def __log_data(self):
         self.__log_DotMap('site', self.__values.site)
         self.__log_DotMap('mds', self.__values.mds)
+        self.__log_DotMap('user_institutions', self.__values.user_institutions)
         self.__log_DotMap('users', self.__values.users)
         self.__log_DotMap('md_user', self.__values.md_user)
         self.__log_DotMap('user_md', self.__values.user_md)
-        self.__log_DotMap('user_institutions', self.__values.user_institutions)
 
     def __create_institutions(self):
         self.__values.institution_group = self.__values.pop('institution')
@@ -83,7 +83,7 @@ class CSVParser(object):
             md.specialite = spec[1]
             md.nom = md.nom.upper()
             md.is_biller = True
-            md.id = '{0}, {1} ({2})'.format(md.prenom, md.nom, md.numero if 'numero' in md.keys() else '')
+            md.id = '{0}, {1} ({2})'.format(md.prenom, md.nom, md.numero_pratique if 'numero_pratique' in md.keys() else '')
             if 'users' in md.keys():
                 md.users = md.users.split('|')
         pass
@@ -137,14 +137,9 @@ class CSVParser(object):
                     continue
                 for link in md.users:
                     if user.utilisateur == link:
-                        associations[idx] =  md.numero_groupe
+                        associations[idx] = md.numero_pratique
+                        continue
                 idx += 1
-            # Check users without limitations, then it means they can bill for every md
-            counts = Counter(associations)
-            if len(counts) == 1 and counts[None] == len(self.__values.mds):
-                associations = []
-                for md in self.__values.mds:
-                    associations.append(md.numero_groupe)
 
             association_list[user.utilisateur] = associations
 
@@ -161,14 +156,9 @@ class CSVParser(object):
                     continue
                 for link in md.users:
                     if user.utilisateur == link:
-                        associations[idx] = user.utilisateur
+                        associations[idx] = md.numero_pratique
+                        continue
                 idx += 1
-            # Check users without limitations, then it means they can bill for every md
-            counts = Counter(associations)
-            if len(counts) == 1 and counts[None] == len(self.__values.users):
-                associations = []
-                for user in self.__values.users:
-                    associations.append(user.utilisateur if md.is_biller else None)
 
             association_list[md.numero_pratique] = associations
 

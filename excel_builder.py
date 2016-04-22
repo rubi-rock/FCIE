@@ -174,6 +174,8 @@ class ExcelGenerator(object):
                     ws_definition['content'].append(params)
                 elif 'hspace' in params.keys():
                     ws_definition['content'].append(params)
+                elif 'variable' in params.keys():
+                    ws_definition['content'].append(params)
 
         return self.__process_ws_definition(ws_definition)
 
@@ -205,6 +207,8 @@ class ExcelGenerator(object):
                     elif 'hspace' in item.keys():
                         py_code = self.__prepare_eval_expression(item['vspace'])
                         self.__variables['last_column'] = self.__variables['last_column'] + eval(py_code)
+                    elif 'variable' in item.keys():
+                        self.__save_variable(item)
 
                     if 'remember_last_row' in item and lr is not None:
                         self.__variables['last_row'] = lr + 1
@@ -259,16 +263,23 @@ class ExcelGenerator(object):
                 output_dict[name] = self.__substitute_variable_names(value)
             return output_dict
 
-        output = cell
-        for var_name in self.__variables.keys():
-            expression = r'(\([\s0-9+-\/\*]*{0}[\s0-9+-/*]*\))'.format(var_name)
+        try:
+            output = cell
+            expression = r'(\(\s*((' + '|'.join(var_name for var_name in self.__variables.keys()) + r')[\s0-9+-/*]*)*\))'
             matches = re.findall(expression, output)
             if len(matches) > 0:
-                find_results = [x for x in matches if x]
+                find_results = []
+                for x in matches:
+                    find_results.append(x[0])
                 for result in find_results:
-                    py_code = self.__prepare_eval_expression(result)
-                    value = eval(py_code)
-                    output = output.replace(result, str(value))
+                    for var_name in self.__variables.keys():
+                        py_code = self.__prepare_eval_expression(result)
+                        value = eval(py_code)
+                        output = output.replace(result, str(value))
+        except:
+            logging.exception('Unable to replace variable names with values: ' + cell)
+            raise
+
         return output
 
     def __substitute_last_coords(self, cell):
@@ -298,6 +309,8 @@ class ExcelGenerator(object):
         cell = xl_rowcol_to_cell(row + row_offset, col + col_offset)
         self.__variables['current_row'] = row + row_offset + 1
         self.__variables['current_col'] = col + col_offset + 1
+        self.__variables['row_offset'] = row_offset
+        self.__variables['col_offset'] = col_offset
         value = self.__substitute_last_coords(cell_value)
         value = self.__substitute_variables(value)
 
@@ -354,9 +367,13 @@ class ExcelGenerator(object):
         return col, row, col, merge_to_row, merge_to_col
 
     def __save_variable(self, item):
-        if 'save' not in item.keys():
+        if 'save' in item.keys():
+            var = item['save'].split('=', 1)
+        elif 'variable' in item.keys():
+            var = item['variable'].split('=', 1)
+        else:
             return
-        var = item['save'].split('=', 1)
+
         py_code = self.__prepare_eval_expression(var[1])
         self.variables[var[0]] = eval(py_code)
 
@@ -418,22 +435,31 @@ class ExcelGenerator(object):
                     row_offset = write_col_value(row_offset)
 
         if 'spare_rows' in item:
+            row_count = int(self.__substitute_variable_names(item['spare_rows']))
             if 'spare_row_value' in item:
                 value = item['spare_row_value']
             elif 'copy_value_on_spare_row' in item and item['copy_value_on_spare_row']:
                 value = item['value'] if 'value' in item.keys() else None
             else:
                 value = None
-            for i in range(item['spare_rows']):
+            for i in range(row_count):
                 row_offset = write_col_value(row_offset)
 
         return row + row_offset, col
 
     def __fill_row(self, worksheet, item):
-        def write_row_value():
+        def write_row_value(value, col_offset):
             self.write_value(worksheet, item, value, format, row, col, row_offset if row_offset >= 0 else 0, col_offset if col_offset >= -1 else 0, merge_to_row, merge_to_col)
             if row_offset == 0 or col_offset == 0:
                 self.__save_variable(item)
+
+        def add_spare_columns(value, col_offset):
+            if 'spare_columns' in item.keys():
+                col_count = int(self.__substitute_variable_names(item['spare_columns']))
+                for i in range(col_count):
+                    col_offset += 1
+                    write_row_value(value, col_offset)
+            return col_offset
 
         cell = item['row']
         cell = self.__substitute_last_coords(cell)
@@ -441,10 +467,18 @@ class ExcelGenerator(object):
         format = self.__get_format(item)
 
         value_list = self.__csv.get_record(item['loop']) if 'loop' in item else None
+        if 'length' in item.keys():
+            length = self.__csv.get_record(item['length'])
+            length = len (length)
+        else:
+            length = None
 
-        row_offset = 0
-        key = item['loop'].split('.')
-        key = key[1] if len(key) > 1 else None
+        if 'loop' in item.keys():
+            key = item['loop'].split('.')
+            key = key[1] if len(key) > 1 else None
+        else:
+            key = None
+
         row_offset = -1
         col_offset = -1
         if value_list is not None:
@@ -453,7 +487,8 @@ class ExcelGenerator(object):
                 for record in value_list:
                     col_offset += 1
                     value = record[key]
-                    write_row_value()
+                    write_row_value(value, col_offset)
+                col_offset = add_spare_columns(None, col_offset)
             else:
                 max_col = 0
                 for record in value_list:
@@ -461,20 +496,30 @@ class ExcelGenerator(object):
                     col_offset = -1
                     for value in record:
                         col_offset += 1
-                        write_row_value()
+                        write_row_value(value, col_offset)
                         max_col = max(max_col, col_offset)
+                    col_offset = add_spare_columns(None, col_offset)
                 if 'spare_rows' in item:
-                    value = None
-                    for r in range(item['spare_rows']):
+                    row_count = int(self.__substitute_variable_names(item['spare_rows']))
+                    for r in range(row_count):
                         row_offset += 1
                         col_offset = -1
                         for c in range(max_col + 1):
                             col_offset += 1
-                            write_row_value()
+                            write_row_value(None, col_offset)
+                        col_offset = add_spare_columns(None, col_offset)
+        elif length is not None:
+            row_offset = 0
+            value = item['value'] if 'value' in item.keys() else None
+            for c in range(length):
+                col_offset += 1
+                write_row_value(value, col_offset)
+            col_offset = add_spare_columns(value, col_offset)
         elif 'values' in item:
             for value in item['values']:
                 col_offset += 1
-                write_row_value()
+                write_row_value(value, col_offset)
+            col_offset = add_spare_columns(None, col_offset)
 
         return row + row_offset, col + col_offset
 

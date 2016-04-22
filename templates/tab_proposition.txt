@@ -2,6 +2,9 @@
 {'header' : {'format': '&L&G&C&18&"Times New Roman,Bold"&D - &A', 'options': {'image_left': 'images/purkinje.png'}}}
 {'footer' : {'format': '&L&10&"Times New Roman,Bold"NOTE : Les prix sont valables jusqu\'au 25 mai 2016.\n&R&10&"Times New Roman,"Page &P / &N\n&C&G', 'options': {'image_center': 'images/footer.png'}}}
 
+{'variable': 'extra_rows=5'}
+{'variable': 'extra_columns=5'}
+
 {'vspace': 0}
 #{'cell': 'A(last_row+1):T(last_row+1)', 'style': 'title', 'value': "PROPOSITION FINANCIÈRE"}
 #{'vspace': 2}
@@ -18,10 +21,10 @@
 {'cell': 'E(last_row+7):H(last_row+7)', 'style': 'cell', 'data': 'site.code_postal'}
 
 # Agent Purkinje
-{'cell': 'N(last_row+1):Q(last_row+1)', 'style': 'section_locked', 'value': 'Date:'}
-{'cell': 'R(last_row+1):T(last_row+1)', 'style': 'section_date', 'value': '=TODAY()'}
-{'col': 'N(last_row+2):Q(last_row+2)', 'style': 'cell', 'values': ['Représentant Purkinje:', 'Téléphone:', 'Fax:', 'Courriel:']}
-{'col': 'R(last_row+2):T(last_row+2)', 'style': 'cell_locked', 'values': ['', '514.355.0888', '514.355.0481', 'support@purkinje.com']}
+{'cell': 'T(last_row+1):V(last_row+1)', 'style': 'section_locked', 'value': 'Date:'}
+{'cell': 'W(last_row+1):Z(last_row+1)', 'style': 'section_date', 'value': '=TODAY()'}
+{'col': 'T(last_row+2):V(last_row+2)', 'style': 'cell', 'values': ['Représentant Purkinje:', 'Téléphone:', 'Fax:', 'Courriel:']}
+{'col': 'W(last_row+2):Z(last_row+2)', 'style': 'cell_locked', 'values': ['', '514.355.0888', '514.355.0481', 'support@purkinje.com']}
 {'cell': 'T(last_row+7)', 'remember_last_row' : True}
 
 # Text
@@ -41,15 +44,15 @@
 {'cell': 'S(last_row+2)', 'style': 'colored_header', 'value': 'Facture?'}
 {'cell': 'T(last_row+2)', 'style': 'colored_header', 'value': 'Mensualité', 'remember_last_row' : True}
 # MD - list
-{'col': 'A(last_row+1):B(last_row+1)', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.numero_pratique', 'cast': 'cell_as_int', 'save': 'md_first_row=current_row'}
-{'col': 'C(last_row+1):E(last_row+1)', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.nom'}
-{'col': 'F(last_row+1):H(last_row+1)', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.prenom'}
-{'col': 'I(last_row+1)', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.code_specilite', 'height': 29}
-{'col': 'J(last_row+1):O(last_row+1)', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.specialite', 'height': 29}
-{'col': 'P(last_row+1):Q(last_row+1)', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.numero_groupe', 'cast': 'cell_as_int'}
-{'col': 'R(last_row+1)', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.rmx', 'cast': 'cell_as_oui_non', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'conditional_formating': {'type': 'formula', 'criteria': '=ISBLANK(A(current_row))', 'format': 'hidden_cell'}}
-{'col': 'S(last_row+1)', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.is_biller', 'cast': 'cell_as_oui_non', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'spare_row_value': True, 'conditional_formating': {'type': 'formula', 'criteria': '=ISBLANK(A(current_row))', 'format': 'hidden_cell'}}
-{'col': 'T(last_row+1)', 'style': 'cell_dollard_locked', 'spare_rows': 5, 'loop': 'mds', 'value': '==IF(ISBLANK(A(current_row)), "", IF(S(current_row)="Oui", 68, ""))', 'remember_last_row' : True, 'copy_value_on_spare_row': True}
+{'col': 'A(last_row+1):B(last_row+1)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'mds.numero_pratique', 'cast': 'cell_as_int', 'save': 'md_first_row=current_row'}
+{'col': 'C(last_row+1):E(last_row+1)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'mds.nom'}
+{'col': 'F(last_row+1):H(last_row+1)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'mds.prenom'}
+{'col': 'I(last_row+1)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'mds.code_specilite', 'height': 29}
+{'col': 'J(last_row+1):O(last_row+1)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'mds.specialite', 'height': 29}
+{'col': 'P(last_row+1):Q(last_row+1)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'mds.numero_groupe', 'cast': 'cell_as_int'}
+{'col': 'R(last_row+1)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'mds.rmx', 'cast': 'cell_as_oui_non', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'conditional_formating': {'type': 'formula', 'criteria': '=ISBLANK(A(current_row))', 'format': 'hidden_cell'}}
+{'col': 'S(last_row+1)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'mds.is_biller', 'cast': 'cell_as_oui_non', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'spare_row_value': True, 'conditional_formating': {'type': 'formula', 'criteria': '=ISBLANK(A(current_row))', 'format': 'hidden_cell'}}
+{'col': 'T(last_row+1)', 'style': 'cell_dollard_locked', 'spare_rows': '(extra_rows)', 'loop': 'mds', 'value': '=IF(ISBLANK(A(current_row)), "", IF(S(current_row)="Oui", 68, ""))', 'remember_last_row' : True, 'copy_value_on_spare_row': True}
 # MD - Total
 {'cell': 'Q(last_row+1):R(last_row+1)', 'style': 'grid_header', 'value': 'Total'}
 {'cell': 'S(last_row+1)', 'style': 'grid_header', 'value': '=COUNTIF(T(md_first_row):T(last_row), "68")', 'locked': True}
@@ -61,7 +64,7 @@
 # List des utilisateurs & frais de démarrage
 {'vspace': 1}
 # users - section
-{'cell': 'A(last_row+1):T(last_row+1)', 'style': 'header1_centered', 'value': 'FRAIS DE DÉMARRAGE (coûts de formation)', 'remember_last_row' : True}
+{'cell': 'A(last_row+1):T(last_row+1)', 'style': 'header1_centered', 'value': 'FRAIS DE DÉMARRAGE', 'remember_last_row' : True}
 # users - headers
 {'cell': 'A(last_row+1):C(last_row+1)', 'style': 'colored_header', 'value': "Nom d'utilisateur"}
 {'cell': 'D(last_row+1):F(last_row+1)', 'style': 'colored_header', 'value': 'Nom'}
@@ -72,13 +75,13 @@
 {'cell': 'T(last_row+1)', 'style': 'colored_header', 'value': 'Coût', 'remember_last_row' : True}
 # users - List
 {'vspace': 1}
-{'col': 'A(last_row):C(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'users.utilisateur', 'save': 'user_first_row=current_row'}
-{'col': 'D(last_row):F(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'users.nom'}
-{'col': 'G(last_row):J(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'users.prenom'}
-{'col': 'K(last_row):L(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'users.mot_de_passe'}
-{'col': 'M(last_row):Q(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'users', 'value': ' '}
-{'col': 'R(last_row):S(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'users', 'value': ' ', 'validation': {'validate': 'list', 'source': [' ', 'Win. XP', "Win. 7, 8 ou 10", 'Win. Serveur', 'OSX', 'iOS', 'Android']}, 'copy_value_on_spare_row': True}
-{'col': 'T(last_row)', 'style': 'cell_dollard_locked', 'spare_rows': 5, 'loop': 'users', 'value': '=IF(ISBLANK(A(current_row)), "", 250)', 'remember_last_row' : True, 'copy_value_on_spare_row': True}
+{'col': 'A(last_row):C(last_row)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'users.utilisateur', 'save': 'user_first_row=current_row'}
+{'col': 'D(last_row):F(last_row)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'users.nom'}
+{'col': 'G(last_row):J(last_row)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'users.prenom'}
+{'col': 'K(last_row):L(last_row)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'users.mot_de_passe'}
+{'col': 'M(last_row):Q(last_row)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'users', 'value': ' '}
+{'col': 'R(last_row):S(last_row)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'users', 'value': ' ', 'validation': {'validate': 'list', 'source': [' ', 'Win. XP', "Win. 7, 8 ou 10", 'Win. Serveur', 'OSX', 'iOS', 'Android']}, 'copy_value_on_spare_row': True}
+{'col': 'T(last_row)', 'style': 'cell_dollard_locked', 'spare_rows': '(extra_rows)', 'loop': 'users', 'value': '=IF(ISBLANK(A(current_row)), "", 250)', 'remember_last_row' : True, 'copy_value_on_spare_row': True}
 # Frais demarrage - Total
 {'cell': 'R(last_row+1):S(last_row+1)', 'style': 'grid_header', 'value': 'Total'}
 {'cell': 'T(last_row+1)', 'style': 'header_dollard', 'value': '=SUM(T(user_first_row):T(last_row))', 'locked': True, 'remember_last_row' : True}
@@ -94,10 +97,11 @@
 {'cell': 'A(last_row):T(last_row)', 'style': 'header1_centered', 'value': 'CONFIGURATION DES ÉTABLISSEMENTS PAR MÉDECIN'}
 {'vspace': 1}
 {'cell': 'A(last_row):E(last_row)', 'style': 'colored_header', 'value': 'MÉDECIN \ ÉTABLISSEMENT'}
-{'row': 'F(last_row)', 'style': 'colored_header_vertical', 'loop': 'institutions.id', 'spare_columns': 5}
+{'row': 'F(last_row)', 'style': 'colored_header_vertical_editable', 'loop': 'institutions.id', 'spare_columns': '(extra_columns)'}
 {'vspace': 1}
-{'col': 'A(last_row):E(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.id'}
-{'row': 'F(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'md_institutions', 'cast': 'str_not_empty_as_oui_non', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'copy_value_on_spare_row': True, 'remember_last_row' : True}
+#{'col': 'A(last_row):E(last_row)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'mds.id'}
+{'col': 'A(last_row):E(last_row)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'mds', 'value': '=CONCATENATE(C(md_first_row+row_offset), " ", F(md_first_row+row_offset), " (", A(md_first_row+row_offset), ")")', 'copy_value_on_spare_row': True}
+{'row': 'F(last_row)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'md_institutions', 'cast': 'str_not_empty_as_oui_non', 'spare_columns': '(extra_columns)', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'remember_last_row' : True}
 
 # Page Break
 {'break': 'last_row'}
@@ -107,11 +111,11 @@
 # MD/Etablissement - section
 {'cell': 'A(last_row):T(last_row)', 'style': 'header1_centered', 'value': 'UTILISATEURS FACTURANT POUR LES MÉDECINS'}
 {'vspace': 1}
-{'cell': 'A(last_row):E(last_row)', 'style': 'colored_header', 'value': 'MÉDECIN / UTILISATEUR'}
-{'row': 'F(last_row)', 'style': 'colored_header_vertical', 'loop': 'users.id' }
+{'cell': 'A(last_row):E(last_row)', 'style': 'colored_header', 'value': 'UTILISATEUR/ MÉDECIN'}
+{'row': 'F(last_row)', 'style': 'colored_header_vertical', 'height': 220, 'length': 'mds', 'spare_columns': '(extra_columns)', 'value': '=CONCATENATE(C(md_first_row+col_offset), " ", F(md_first_row+col_offset), " (", A(md_first_row+col_offset), ")")', 'copy_value_on_spare_row': True}
 {'vspace': 1}
-{'col': 'A(last_row):E(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'mds.id'}
-{'row': 'F(last_row)', 'style': 'cell', 'spare_rows': 5, 'loop': 'md_user', 'cast': 'str_not_empty_as_oui_non', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'copy_value_on_spare_row': True, 'remember_last_row' : True}
+{'col': 'A(last_row):E(last_row)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'users', 'value': '=CONCATENATE(D(user_first_row+row_offset), " ", G(user_first_row+row_offset), " (", A(user_first_row+row_offset), ")")', 'copy_value_on_spare_row': True}
+{'row': 'F(last_row)', 'style': 'cell', 'spare_rows': '(extra_rows)', 'loop': 'user_md', 'cast': 'str_not_empty_as_oui_non', 'spare_columns': '(extra_columns)', 'validation': {'validate': 'list', 'source': [' ', 'Oui', 'Non']}, 'remember_last_row' : True}
 
 # Page Break
 {'break': 'last_row'}
