@@ -3,6 +3,7 @@ from io import StringIO
 from collections import Counter
 from constants import ExcelBlock
 from dotmap import DotMap
+import logging
 
 
 class CSVParser(object):
@@ -20,6 +21,24 @@ class CSVParser(object):
         self.__update_MD_biller_status()
         self.__create_user_md_association()
         self.__create_md_user_association()
+        self.__log_data()
+
+    def __log_DotMap(self, name, obj):
+        logging.info(name)
+        if type(obj) is DotMap:
+            for value in obj.items():
+                logging.info('\t' + str(value))
+        elif type(obj) is list:
+            for value in obj:
+                logging.info('\t' + str(value))
+
+    def __log_data(self):
+        self.__log_DotMap('site', self.__values.site)
+        self.__log_DotMap('mds', self.__values.mds)
+        self.__log_DotMap('users', self.__values.users)
+        self.__log_DotMap('md_user', self.__values.md_user)
+        self.__log_DotMap('user_md', self.__values.user_md)
+        self.__log_DotMap('user_institutions', self.__values.user_institutions)
 
     def __create_institutions(self):
         self.__values.institution_group = self.__values.pop('institution')
@@ -41,8 +60,8 @@ class CSVParser(object):
 
     def __cleanup_names(self):
         # rename
-        self.__values.pop('md')
-        self.__values.mds = self.__values.pop('proposition')
+        #self.__values.pop('md')
+        self.__values.mds = self.__values.pop('md')
         self.__create_institutions()
         self.__values.users = self.__values.pop('user')
 
@@ -58,11 +77,9 @@ class CSVParser(object):
     def __adjust_MDs(self):
         # clean MDs : no group
         for md in self.__values.mds:
-            md.pop('numero_groupe')
-            md.pop('rmx')
             md.prenom = md.prenom.upper()
             md.nom = md.nom.upper()
-            md.is_biller = False
+            md.is_biller = True
             md.id = '{0}, {1} ({2})'.format(md.prenom, md.nom, md.numero if 'numero' in md.keys() else '')
             if 'users' in md.keys():
                 md.users = md.users.split('|')
@@ -78,12 +95,12 @@ class CSVParser(object):
         association_list = DotMap()
         for md in self.__values.mds:
             associations = [None] * len(self.__values.institutions)
-            association_list[md.numero] = associations
+            association_list[md.numero_pratique] = associations
             idx = 0
             for institution in self.__values.institutions:
                 for group in self.__values.institution_group:
                     group.full_key = self.__get_full_key(group)
-                    if md.numero == group.numero_pratique and institution.full_key == group.full_key and institution.full_key not in associations:
+                    if md.numero_pratique == group.numero_pratique and institution.full_key == group.full_key and institution.full_key not in associations:
                         associations[idx] = institution.full_key
                 idx += 1
 
@@ -93,6 +110,9 @@ class CSVParser(object):
         self.__values.pop('group')
 
     def __update_MD_biller_status(self):
+        billers = self.__values.mds
+        return
+
         billers = {}
         for md in self.__values.mds:
             for institution in md.institutions:
@@ -114,14 +134,14 @@ class CSVParser(object):
                     continue
                 for link in md.users:
                     if user.utilisateur == link:
-                        associations[idx] =  md.numero
+                        associations[idx] =  md.numero_groupe
                 idx += 1
             # Check users without limitations, then it means they can bill for every md
             counts = Counter(associations)
             if len(counts) == 1 and counts[None] == len(self.__values.mds):
                 associations = []
                 for md in self.__values.mds:
-                    associations.append(md.numero)
+                    associations.append(md.numero_groupe)
 
             association_list[user.utilisateur] = associations
 
@@ -147,7 +167,7 @@ class CSVParser(object):
                 for user in self.__values.users:
                     associations.append(user.utilisateur if md.is_biller else None)
 
-            association_list[md.numero] = associations
+            association_list[md.numero_pratique] = associations
 
         self.__values.md_user = list(association_list.values())
         pass
@@ -155,13 +175,14 @@ class CSVParser(object):
     def __parse(self, filename):
         excel_block = None
         read_headers = False
-        with open(filename, mode='rt', newline="\n") as csv_file:
+        with open(filename, mode='rt', encoding='iso-8859-1', newline="\r\n") as csv_file:
             for line in iter(csv_file):
+                line = line.replace('\r', '').replace('\n', '')
                 # block detection
                 if line.startswith("==="):
                     line = line.replace('=', '').replace('\n', '')
                     # process only known blocks
-                    if line.lower() in ExcelBlock:
+                    if line.lower().strip() in ExcelBlock:
                         excel_block = line.lower()
                         read_headers = True
                         if excel_block not in ['site', 'customer']:

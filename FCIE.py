@@ -5,4 +5,4 @@ from other_helpers import LogUtility    # keep it even if it seems unused, it se
 
 
 if __name__ == '__main__':
-    eg = excel_builder.ExcelGenerator('test3.csv')
+    eg = excel_builder.ExcelGenerator('samples/test20.csv')

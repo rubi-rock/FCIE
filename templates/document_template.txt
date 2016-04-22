@@ -14,7 +14,7 @@
 {'style': {'name' : 'input', 'properties': {'valign': 'top', 'text_wrap': True, 'bottom': 1}}}
 {'style': {'name' : 'input_dollard', 'properties': {'valign': 'top', 'text_wrap': True, 'num_format': '$0.00', 'bottom': 1}}}
 {'style': {'name' : 'text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'locked': True}}}
-{'style': {'name' : 'text_vcentered', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'valign': 'vcenter'}}}
+{'style': {'name' : 'text_vcentered', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'valign': 'vcenter', 'align': 'center'}}}
 {'style': {'name' : 'underlined_text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'underline': True}}}
 {'style': {'name' : 'bold_text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'bold': True}}}
 {'style': {'name' : 'italic_text', 'properties': {'valign': 'top', 'text_wrap': True, 'font_name': 'Book Antiqua', 'font_size': '11', 'italic': True}}}

@@ -88,8 +88,7 @@ class ExcelGenerator(object):
             properties['locked'] = False
         self.__formats[name] = self.__workbook.add_format(properties)
 
-    @staticmethod
-    def __reformat_worksheet(worksheet, ws_format):
+    def __reformat_worksheet(self, worksheet, ws_format):
         for name, value in ws_format.items():
             if name == 'orientation':
                 if value == 'portrait':
@@ -97,7 +96,7 @@ class ExcelGenerator(object):
                 elif value == 'landscape':
                     worksheet.set_landscape()
             elif name == 'paper':
-                worksheet.set_paper(int(value))
+                self.__set_paper(worksheet, value)
             elif name == 'margins':
                 worksheet.set_margins(value[0], value[1], value[2], value[3])
             elif name == 'tab_color':
@@ -401,7 +400,9 @@ class ExcelGenerator(object):
                     row_offset = write_col_value(row_offset)
 
         if 'spare_rows' in item:
-            if 'copy_value_on_spare_row' in item and item['copy_value_on_spare_row']:
+            if 'spare_row_value' in item:
+                value = item['spare_row_value']
+            elif 'copy_value_on_spare_row' in item and item['copy_value_on_spare_row']:
                 value = item['value'] if 'value' in item.keys() else None
             else:
                 value = None
@@ -452,7 +453,7 @@ class ExcelGenerator(object):
                         for c in range(max_col + 1):
                             col_offset += 1
                             write_row_value()
-        else:
+        elif 'values' in item:
             for value in item['values']:
                 col_offset += 1
                 write_row_value()
@@ -501,5 +502,15 @@ class ExcelGenerator(object):
             format = default_format
 
         return line, format, height
+
+    def __set_paper(self, worksheet, value):
+        if type(value) is str and value.lower().strip() == 'autoadjust':
+            l = len(self.__csv.values.md_user)
+            value = 1 if l < 14 else (5 if l < 27 else 7)
+            worksheet.set_paper(int(value))
+            worksheet.fit_to_pages(1, 0)
+        else:
+            worksheet.set_paper(int(value))
+
 
 
