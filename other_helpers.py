@@ -98,7 +98,7 @@ class LogUtility(object):
         formatter = logging.Formatter('%(asctime)s, %(levelname)s, "%(message)s"', "%Y/%m/%d, %H:%M:%S")
 
         # create console handler and set level to info
-        self.__console_logger.setLevel(logging.INFO)
+        self.__console_logger.setLevel(logging.ERROR)
         self.__console_logger.setFormatter(formatter)
         logger.addHandler(self.__console_logger)
 
