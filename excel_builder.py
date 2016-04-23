@@ -3,7 +3,6 @@ import xlsxwriter
 from xlsxwriter.utility import xl_rowcol_to_cell, xl_cell_to_rowcol
 import ast
 import logging
-import pdb
 
 from csv_parser import CSVParser
 from constants import OUI_NON, BOOL_OUI_NON, OS_LIST
