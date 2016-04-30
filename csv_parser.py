@@ -1,13 +1,19 @@
 import csv
 from io import StringIO
-from collections import Counter
+
+from pylint.checkers.spelling import maketrans
+
+from AbnomaliesLogger import AbnomaliesLogger
 from constants import ExcelBlock
 from dotmap import DotMap
 import logging
+from collections import Counter
+
 
 
 class CSVParser(object):
     def __init__(self, filename):
+        AbnomaliesLogger.set_file_name(filename)
         self.__values = DotMap()
         self.__parse(filename)
         self.__compile_data()
@@ -40,19 +46,83 @@ class CSVParser(object):
         self.__log_DotMap('md_user', self.__values.md_user)
         self.__log_DotMap('user_md', self.__values.user_md)
 
+
+    def __calculate_best_possible_institution_names(self, name_counters):
+        default_charset = 'ÀÈÌÒÙÁÉÍÓÚÂÊÎÔÛÄËÏÖÜ'
+        normalized_charset = 'AEIOUAEIOUAEIOUAEIOU'
+        trantab = maketrans(default_charset, normalized_charset)
+
+        bpin = {}
+        try:
+            for id, names in name_counters.items():
+                logging.info('{0}: {1}'.format(id, names))
+                grouped_names = Counter(name.upper().translate(trantab) for name in names)
+                if len(grouped_names) == 1:     # no need to do anything in that case
+                    continue
+                best_option = grouped_names.most_common(1)[0]
+                bpin[id] = best_option[0]
+                # log abnomalies
+                if len(grouped_names) > 1:
+                    grouped_names = Counter(name for name in names)
+                    grouped_names = grouped_names.most_common()[:-len(grouped_names):-1]
+                    AbnomaliesLogger.log('Plusieurs instances du même établissement ont été trouvées pour le même numéro : {0} ({1})'.format(id, best_option[0]))
+                    self.__document_institutions_abnomalies('\tLes instances suivantes ont été ignorées car elles sont redondantes :', grouped_names)
+
+            for id, name in bpin.items():
+                self.__values.institutions[id].numero_etablissement = name
+
+        except:
+            logging.exception("Unable to identify Best Possible Instutition Name")
+            raise
+
+    def __document_institutions_abnomalies(self, explaination, values):
+        AbnomaliesLogger.log(explaination)
+        if type(values) is dict:
+            AbnomaliesLogger.log('\n\t\t' + '\n\t\t'.join(['{0} {1}'.format(nom, ', '.join(list(set(numero)))) for nom, numero in values.items()]))
+        elif type(values) is list:
+            values = [item[0] if type(item) is tuple else item for item in values]
+            values = list(set(values))
+            AbnomaliesLogger.log('\n\t\t' + '\n\t\t'.join([item for item in values]))
+
     def __create_institutions(self):
         self.__values.institution_group = self.__values.pop('institution')
+        name_counters = {}
+        excluded_sites = {}
+        null_sites = {}
+
         self.__values.institutions = DotMap()
         for group in self.__values.institution_group:
-            if group.numero_groupe is None:
+            # null institution name
+            if group.nom_etablissement == 'null':
+                null_sites[group.numero_etablissement] = group.nom_etablissement
+            # Manage excluded institutions (don't bill) to log abnomalies in the original data
+            if group.numero_groupe is None and group.numero_etablissement not in self.__values.institutions.keys():
+                if group.numero_etablissement not in excluded_sites.keys():
+                    excluded_sites[group.numero_etablissement] = []
+                excluded_sites[group.numero_etablissement].append(group.nom_etablissement)
                 continue
+            if group.numero_etablissement in excluded_sites.keys():
+                excluded_sites.pop(group.numero_etablissement)
+
+            # add the institution to elited list
             group.full_key = self.__get_full_key(group)
             if group.numero_etablissement not in self.__values.institutions.keys():
                 institution = DotMap(group.toDict()) # forces a copy because copy() does not work here
                 institution.pop('numero_pratique')
                 institution.id = '{0} ({1})'.format(institution.nom_etablissement, institution.numero_etablissement)
                 self.__values.institutions[institution.numero_etablissement] = institution
+
+            # To figure out later on which institution name is the most use when an institution number is associated
+            # with several labels
+            if group.numero_etablissement not in name_counters.keys():
+                name_counters[group.numero_etablissement] = []
+            name_counters[group.numero_etablissement].append(group.nom_etablissement)
+
+        self.__calculate_best_possible_institution_names(name_counters)
         self.__values.institutions = list(self.__values.institutions.values())
+        # Document abnomalies
+        self.__document_institutions_abnomalies("Les institutions suivantes ne sont pas au contrat car elles n\'ont pas de numéro de groupe :", excluded_sites)
+        self.__document_institutions_abnomalies("Les numéros d\'institutions suivants n'ont pas de nom :", list(null_sites.keys()))
 
     def __get_full_key(self, record):
         #return '{0}.{1}'.format(record.numero_etablissement, record.numero_groupe)
@@ -207,6 +277,7 @@ class CSVParser(object):
                         self.__values[excel_block] = values
                     else:
                         self.__values[excel_block].append(DotMap(values))
+                        logging.info('CSV line loaded: ' + str(values))
 
     @property
     def values(self):
