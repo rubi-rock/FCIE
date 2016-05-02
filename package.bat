@@ -1,1 +1,1 @@
-zip -r fcie.zip *.py images install install_requirements.bat
+zip -r fcie.zip *.py images install install_requirements.bat install_python_libs.bat fcie.txt
