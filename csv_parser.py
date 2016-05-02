@@ -21,6 +21,7 @@ class CSVParser(object):
 
     def __compile_data(self):
         try:
+            self.__check_at_least_1_user_exists()
             self.__copy_mdusers_to_proposition()
             self.__cleanup_names()
             self.__adjust_MDs()
@@ -33,6 +34,16 @@ class CSVParser(object):
         except:
             logging.exception('Unable to parse CSV file: ' + self.__filename)
             raise
+
+    def __check_at_least_1_user_exists(self):
+        if self.__values.user is None or len(self.__values.user) == 0:
+            self.__values.user = list()
+            default_user = DotMap()
+            default_user.utilisateur = 'FACTURATION'
+            default_user.mot_de_passe = 'facture'
+            default_user.nom = 'facturation'
+            default_user.prenom = 'facturation'
+            self.__values.user.append(default_user)
 
     def __log_DotMap(self, name, obj):
         logging.info(name)
@@ -148,143 +159,173 @@ class CSVParser(object):
                 if md.numero_pratique == prop.numero:
                     prop['users'] = md.users
 
-
     def __adjust_MDs(self):
         # clean MDs : no group
-        for md in self.__values.mds:
-            md.prenom = md.prenom.upper()
-            spec = md.specialite.replace('/', '\n').split(' ', 1)
-            md.code_specilite = spec[0]
-            md.specialite = spec[1]
-            md.nom = md.nom.upper()
-            md.is_biller = True
-            md.id = '{0}, {1} ({2})'.format(md.prenom, md.nom, md.numero_pratique if 'numero_pratique' in md.keys() else '')
-            if 'users' in md.keys():
-                try:
-                    md.users = md.users.split('|')
-                except:
-                    logging.exception("Unable to parse the MD's users from: " + str(md.users))
-                    raise
+        try:
+            for md in self.__values.mds:
+                md.prenom = md.prenom.upper() if md.prenom is not None else '?'
+                spec = md.specialite.replace('/', '\n').split(' ', 1)
+                md.code_specilite = spec[0]
+                md.specialite = spec[1]
+                md.nom = md.nom.upper() if md.nom is not None else '?'
+                md.is_biller = True
+                md.id = '{0}, {1} ({2})'.format(md.prenom, md.nom, md.numero_pratique if 'numero_pratique' in md.keys() else '')
+                if 'users' in md.keys():
+                    try:
+                        if md.users is not None:
+                            md.users = md.users.split('|')
+                        else:
+                            # Old user that is not supposed to be used anymore
+                            md.users = ['FACTURATION']
+                    except:
+                        logging.exception("Unable to parse the MD's users from: " + str(md.users))
+                        raise
+        except:
+            logging.exception("Unable to parse the MD's users from: " + str(md.users))
+            raise
 
     def __adjust_Users(self):
-        for user in self.__values.users:
-            user.id = '{0}, {1} ({2})'.format(user.prenom, user.nom, user.utilisateur if 'utilisateur' in user.keys() else '')
+        try:
+            for user in self.__values.users:
+                user.id = '{0}, {1} ({2})'.format(user.prenom, user.nom, user.utilisateur if 'utilisateur' in user.keys() else '')
+        except:
+            logging.exception("Unable to parse the MD's users from: " + str(md.users))
+            raise
 
     def __create_user_groups(self):
         # associate users with institution/groupe
-        association_list = DotMap()
-        for md in self.__values.mds:
-            associations = [None] * len(self.__values.institutions)
-            association_list[md.numero_pratique] = associations
-            idx = 0
-            for institution in self.__values.institutions:
-                for group in self.__values.institution_group:
-                    group.full_key = self.__get_full_key(group)
-                    if md.numero_pratique == group.numero_pratique and institution.full_key == group.full_key and institution.full_key not in associations:
-                        associations[idx] = institution.full_key
-                idx += 1
+        try:
+            association_list = DotMap()
+            for md in self.__values.mds:
+                associations = [None] * len(self.__values.institutions)
+                association_list[md.numero_pratique] = associations
+                idx = 0
+                for institution in self.__values.institutions:
+                    for group in self.__values.institution_group:
+                        group.full_key = self.__get_full_key(group)
+                        if md.numero_pratique == group.numero_pratique and institution.full_key == group.full_key and institution.full_key not in associations:
+                            associations[idx] = institution.full_key
+                    idx += 1
 
-            md.institutions = associations.copy()
-        self.__values.md_institutions = list(association_list.values())
-        self.__values.pop('institution_group')
-        self.__values.pop('group')
+                md.institutions = associations.copy()
+            self.__values.md_institutions = list(association_list.values())
+            self.__values.pop('institution_group')
+            self.__values.pop('group')
+        except:
+            logging.exception("Unable to parse the MD's users from: " + str(md.users))
+            raise
 
     def __update_MD_biller_status(self):
-        billers = self.__values.mds
-        return
+        try:
+            billers = self.__values.mds
+            return
 
-        billers = {}
-        for md in self.__values.mds:
-            for institution in md.institutions:
-                biller = institution is not None
-                if biller:
-                    md.is_biller = True
-                    if md.numero not in billers.keys():
-                        billers[md.numero] = md
-            continue
-        self.__values.billers = list(billers.values())
+            billers = {}
+            for md in self.__values.mds:
+                for institution in md.institutions:
+                    biller = institution is not None
+                    if biller:
+                        md.is_biller = True
+                        if md.numero not in billers.keys():
+                            billers[md.numero] = md
+                continue
+            self.__values.billers = list(billers.values())
+        except:
+            logging.exception("Unable to parse the MD's users from: " + str(md.users))
+            raise
 
     def __create_user_md_association(self):
-        association_list = DotMap()
-        for user in self.__values.users:
-            associations = [None] * len(self.__values.mds)
-            idx = 0
-            for md in self.__values.mds:
-                if 'users' not in md.keys():
-                    continue
-                for link in md.users:
-                    if user.utilisateur == link:
-                        associations[idx] = md.numero_pratique
+        try:
+            association_list = DotMap()
+            for user in self.__values.users:
+                associations = [None] * len(self.__values.mds)
+                idx = 0
+                for md in self.__values.mds:
+                    if 'users' not in md.keys():
                         continue
-                idx += 1
+                    for link in md.users:
+                        if user.utilisateur == link:
+                            associations[idx] = md.numero_pratique
+                            continue
+                    idx += 1
 
-            association_list[user.utilisateur] = associations
+                association_list[user.utilisateur] = associations
 
-        self.__values.user_md = list(association_list.values())
-        pass
+            self.__values.user_md = list(association_list.values())
+        except:
+            logging.exception("Unable to parse the MD's users from: " + str(md.users))
+            raise
 
     def __create_md_user_association(self):
-        association_list = DotMap()
-        for md in self.__values.mds:
-            associations = [None] * len(self.__values.users)
-            idx = 0
-            for user in self.__values.users:
-                if 'users' not in md.keys():
-                    continue
-                for link in md.users:
-                    if user.utilisateur == link:
-                        associations[idx] = md.numero_pratique
+        try:
+            association_list = DotMap()
+            for md in self.__values.mds:
+                associations = [None] * len(self.__values.users)
+                idx = 0
+                for user in self.__values.users:
+                    if 'users' not in md.keys():
                         continue
-                idx += 1
+                    for link in md.users:
+                        if user.utilisateur == link:
+                            associations[idx] = md.numero_pratique
+                            continue
+                    idx += 1
 
-            association_list[md.numero_pratique] = associations
+                association_list[md.numero_pratique] = associations
 
-        self.__values.md_user = list(association_list.values())
-        pass
+            self.__values.md_user = list(association_list.values())
+        except:
+            logging.exception("Unable to parse the MD's users from: " + str(md.users))
+            raise
 
     def __parse(self, filename):
-        excel_block = None
-        read_headers = False
-        with open(filename, mode='rt', encoding='iso-8859-1', newline="\r\n") as csv_file:
-            for line in iter(csv_file):
-                line = line.replace('\r', '').replace('\n', '')
-                # block detection
-                if line.startswith("==="):
-                    line = line.replace('=', '').replace('\n', '')
-                    # process only known blocks
-                    if line.lower().strip() in ExcelBlock:
-                        excel_block = line.lower()
-                        read_headers = True
-                        if excel_block not in ['site', 'customer']:
-                            self.__values[excel_block] = []
+        try:
+            excel_block = None
+            read_headers = False
+            with open(filename, mode='rt', encoding='iso-8859-1', newline="\r\n") as csv_file:
+                for line in iter(csv_file):
+                    line = line.replace('\r', '').replace('\n', '')
+                    # block detection
+                    if line.startswith("==="):
+                        line = line.replace('=', '').replace('\n', '')
+                        # process only known blocks
+                        if line.lower().strip() in ExcelBlock:
+                            excel_block = line.lower()
+                            read_headers = True
+                            if excel_block not in ['site', 'customer']:
+                                self.__values[excel_block] = []
+                            continue
+                        else:
+                            excel_block = None
+
+
+                    # skip headers
+                    if read_headers:
+                        csv_stream = StringIO(line)
+                        csv_line = csv.reader(csv_stream, delimiter=',', quotechar='"')
+                        csv_line = [None if col == '' else col for col in csv_line]
+                        headers = list(None if header == '' else header.lower().replace(' ', '_') for header in csv_line[0])
+                        read_headers = False
                         continue
-                    else:
-                        excel_block = None
 
+                    # add values to block
+                    if excel_block is not None:
+                        csv_stream = StringIO(line)
+                        csv_line = csv.reader(csv_stream, delimiter=',', quotechar='"')
+                        csv_line = next(csv_line)
+                        csv_line = [None if col == '' else col for col in csv_line]
+                        csv_line = [True if col == 'T' else col for col in csv_line]
+                        csv_line = [False if col == 'F' else col for col in csv_line]
+                        values = dict(zip(headers, csv_line))
+                        if excel_block in ['site', 'customer']:
+                            self.__values[excel_block] = values
+                        else:
+                            self.__values[excel_block].append(DotMap(values))
+                            logging.info('CSV line loaded: ' + str(values))
 
-                # skip headers
-                if read_headers:
-                    csv_stream = StringIO(line)
-                    csv_line = csv.reader(csv_stream, delimiter=',', quotechar='"')
-                    csv_line = [None if col == '' else col for col in csv_line]
-                    headers = list(None if header == '' else header.lower().replace(' ', '_') for header in csv_line[0])
-                    read_headers = False
-                    continue
-
-                # add values to block
-                if excel_block is not None:
-                    csv_stream = StringIO(line)
-                    csv_line = csv.reader(csv_stream, delimiter=',', quotechar='"')
-                    csv_line = next(csv_line)
-                    csv_line = [None if col == '' else col for col in csv_line]
-                    csv_line = [True if col == 'T' else col for col in csv_line]
-                    csv_line = [False if col == 'F' else col for col in csv_line]
-                    values = dict(zip(headers, csv_line))
-                    if excel_block in ['site', 'customer']:
-                        self.__values[excel_block] = values
-                    else:
-                        self.__values[excel_block].append(DotMap(values))
-                        logging.info('CSV line loaded: ' + str(values))
+        except:
+            logging.exception("Unable to parse the MD's users from: " + str(md.users))
+            raise
 
     @property
     def values(self):
