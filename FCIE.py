@@ -42,7 +42,8 @@ def validate_and_process_folder(ctx, param, value):
 
     file_list = FileSeeker.walk(value, ['*.csv'])
     for file in file_list:
-        process_file(file.fullname)
+        if file.file_name.startswith("Agence"):
+            process_file(file.fullname)
 
 @click.group()
 def cli():
