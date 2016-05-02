@@ -1,0 +1,1 @@
+zip -r fcie.zip *.py images install install_requirements.bat
