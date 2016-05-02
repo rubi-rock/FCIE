@@ -13,21 +13,26 @@ from collections import Counter
 
 class CSVParser(object):
     def __init__(self, filename):
+        self.__filename = filename
         AbnomaliesLogger.set_file_name(filename)
         self.__values = DotMap()
         self.__parse(filename)
         self.__compile_data()
 
     def __compile_data(self):
-        self.__copy_mdusers_to_proposition()
-        self.__cleanup_names()
-        self.__adjust_MDs()
-        self.__adjust_Users()
-        self.__create_user_groups()
-        self.__update_MD_biller_status()
-        self.__create_user_md_association()
-        self.__create_md_user_association()
-        self.__log_data()
+        try:
+            self.__copy_mdusers_to_proposition()
+            self.__cleanup_names()
+            self.__adjust_MDs()
+            self.__adjust_Users()
+            self.__create_user_groups()
+            self.__update_MD_biller_status()
+            self.__create_user_md_association()
+            self.__create_md_user_association()
+            self.__log_data()
+        except:
+            logging.exception('Unable to parse CSV file: ' + self.__filename)
+            raise
 
     def __log_DotMap(self, name, obj):
         logging.info(name)
@@ -142,7 +147,7 @@ class CSVParser(object):
             for prop in self.__values.proposition:
                 if md.numero_pratique == prop.numero:
                     prop['users'] = md.users
-        pass
+
 
     def __adjust_MDs(self):
         # clean MDs : no group
@@ -155,13 +160,15 @@ class CSVParser(object):
             md.is_biller = True
             md.id = '{0}, {1} ({2})'.format(md.prenom, md.nom, md.numero_pratique if 'numero_pratique' in md.keys() else '')
             if 'users' in md.keys():
-                md.users = md.users.split('|')
-        pass
+                try:
+                    md.users = md.users.split('|')
+                except:
+                    logging.exception("Unable to parse the MD's users from: " + str(md.users))
+                    raise
 
     def __adjust_Users(self):
         for user in self.__values.users:
             user.id = '{0}, {1} ({2})'.format(user.prenom, user.nom, user.utilisateur if 'utilisateur' in user.keys() else '')
-        pass
 
     def __create_user_groups(self):
         # associate users with institution/groupe

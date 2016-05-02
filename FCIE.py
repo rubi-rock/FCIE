@@ -1,12 +1,16 @@
 import click
 import os.path
+import logging
 import excel_builder
 from os_path_helper import FileSeeker
 from other_helpers import LogUtility    # keep it even if it seems unused, it set up the logging automatically
-
+from colorama import init, Fore, Style
 
 HELP_FILE_PARAM = 'you must provide at least one CSV file name to process. E.g.: FCIE -file MyFile.csv.\nYou can also process multiple files at once: FCIE -file MyFile1.csv -file MyFile2.csv'
 HELP_FOLDER_PARAM = 'you must provide an existing path, e.g.: FCIE -folder c:/csv_files. All CSV files from this folder will be converted to excel files.'
+
+# Colorama init
+init(autoreset=True)
 
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
@@ -18,10 +22,12 @@ def print_version(ctx, param, value):
 def process_file(filename):
     try:
         excel_builder.ExcelGenerator(filename)
-        print("File processed successfuly: {0}".format(filename))
-    except:
-        print("Error processing file: {0}".format(filename))
-
+        print(Fore.RESET + Fore.GREEN + "File processed successfuly: {0}".format(filename))
+    except Exception as e:
+        text = "Unable to process file: " + filename
+        logging.exception(text)
+        print(Fore.RESET + Fore.RED + text)
+        print(Fore.RESET + Fore.LIGHTBLACK_EX + '\t\t' + str(e))
 
 def validate_and_process_file(ctx, param, value):
     if len(value) == 0:
